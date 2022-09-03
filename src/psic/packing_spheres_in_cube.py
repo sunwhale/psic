@@ -254,6 +254,8 @@ def update_radius_sets(radius_sets, radiuses):
 def packing_hyperspheres_in_hypercube(ncircle, radius_sets, size, gap, num_add, max_iter, dt0, dt_interval, status):
     """
     向区域内填充圆/球
+    
+    packing_hyperspheres_in_hypercube(ncircle, radius_sets, size, gap, num_add, max_iter, dt0, dt_interval, status)
 
     Parameters
     ----------
@@ -273,7 +275,9 @@ def packing_hyperspheres_in_hypercube(ncircle, radius_sets, size, gap, num_add, 
         初始时间步长
     dt_interval : int
         向矩形内部添加dt_interval次圆后，运动一次
-
+    status : dict
+        运行状态字典
+        
     Returns
     -------
     centers_1 : array
@@ -351,8 +355,7 @@ def packing_hyperspheres_in_hypercube(ncircle, radius_sets, size, gap, num_add, 
                     r_1 = radiuses_1[is_crash[0]]
                     r_2 = radiuses_1[is_crash[1]]
 
-                    tc = crash_time(center_1, center_2,
-                                    velocity_1, velocity_2, r_1, r_2, dt)
+                    tc = crash_time(center_1, center_2, velocity_1, velocity_2, r_1, r_2, dt)
 
                     centers_2 = centers_1 + velocities_1 * tc
                     center_1 = centers_2[is_crash[0]]
@@ -402,6 +405,56 @@ def packing_hyperspheres_in_hypercube(ncircle, radius_sets, size, gap, num_add, 
 
 
 def create_model(*args):
+    """
+    根据参数列表生成填充模型
+    
+    create_model(*args)
+    
+    args = (ncircle, size, gap, num_add, max_iter, dt0, dt_interval, rayleigh_para, num_ball, rad_min, rad_max, model_path, status)
+    
+    args
+    ----------
+    ncircle : int
+        单次向矩形区域内增加圆的数量
+    radius_sets : array
+        填充粒子的半径分布集合
+    size : list
+        区域取值范围
+    gap : float
+        圆/球之间的间隔
+    num_add : int
+        循环添加圆形次数
+    max_iter : int
+        时间回溯的最大迭代次数
+    dt0 : float
+        初始时间步长
+    dt_interval : int
+        向矩形内部添加dt_interval次圆后，运动一次
+    rayleigh_para : float
+        瑞利分布参数
+    num_ball : int
+        生成集合内球体数量
+    rad_min : int
+        去掉集合内半径小于rad_min的球
+    rad_max : int
+        去掉集合内半径大于rad_max的球
+    model_path : path
+        生成模型文件的存储路径
+    status : dict
+        运行状态字典
+    
+    Process
+    -------
+    生成模型文件：model.npy
+    生成参数文件：args.json
+    生成日志文件：model.log
+    
+    Returns
+    -------
+    0
+
+    """
+    
     ncircle, size, gap, num_add, max_iter, dt0, dt_interval, rayleigh_para, num_ball, rad_min, rad_max, model_path, status = args
 
     # 生成需要填充的半径集合
@@ -424,11 +477,6 @@ def create_model(*args):
     status['log'] += 'Save %s\n' % filename
     np.save(filename, data)
 
-    filename = os.path.join(model_path, 'args.json')
-    status['log'] += 'Save %s\n' % filename
-    with open(filename, 'w', encoding='utf-8') as f:
-        json.dump(args, f, ensure_ascii=False)
-
     filename = os.path.join(model_path, 'model.log')
     status['log'] += 'Save %s\n' % filename
     with open(filename, 'w', encoding='utf-8') as f:
@@ -436,6 +484,13 @@ def create_model(*args):
 
     status['progress'] = 100
     status['status'] = 'Done'
+    
+    filename = os.path.join(model_path, 'args.json')
+    status['log'] += 'Save %s\n' % filename
+    with open(filename, 'w', encoding='utf-8') as f:
+        json.dump(args, f, ensure_ascii=False)
+
+    return 0
 
 
 if __name__ == "__main__":
