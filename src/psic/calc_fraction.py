@@ -70,7 +70,8 @@ def calc_minor_area(chrod_length, r):
     return minor_area
 
 
-def calc_area_fraction(centers, radiuses, xmin, xmax, ymin, ymax):
+def calc_area_fraction(centers, radiuses, size):
+    xmin, xmax, ymin, ymax = size[0][0], size[0][1], size[1][0], size[1][1]
     circles_area = 0
     for i in range(len(centers)):
         center = centers[i]

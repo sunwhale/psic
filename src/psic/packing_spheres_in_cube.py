@@ -15,8 +15,10 @@ from scipy.spatial.distance import cdist
 # 本地文件
 try:
     from psic.calc_fraction import calc_area_fraction, calc_volume_fraction
+    from psic.plot_model import plot_circle, plot_sphere
 except:
     from calc_fraction import calc_area_fraction, calc_volume_fraction
+    from plot_model import plot_circle, plot_sphere
 
 
 def rayleigh_set(scale, size):
@@ -374,8 +376,7 @@ def packing_hyperspheres_in_hypercube(ncircle, radius_sets, size, gap, num_add, 
         try:
             if i % int(num_add/10) == 0:
                 if len(size) == 2:
-                    fraction = calc_area_fraction(
-                        centers_1, radiuses_1-gap, size[0][0], size[0][1], size[1][0], size[1][1])
+                    fraction = calc_area_fraction(centers_1, radiuses_1-gap, size)
                     print(i, n, fraction)
                     try:
                         status['log'] += '%s, %s, %s\n' % (i, n, fraction)
@@ -383,8 +384,7 @@ def packing_hyperspheres_in_hypercube(ncircle, radius_sets, size, gap, num_add, 
                         pass
 
                 if len(size) == 3:
-                    fraction = calc_volume_fraction(
-                        centers_1, radiuses_1-gap, size)
+                    fraction = calc_volume_fraction(centers_1, radiuses_1-gap, size)
                     print(i, n, fraction)
                     try:
                         status['log'] += '%s, %s, %s\n' % (i, n, fraction)
@@ -476,26 +476,48 @@ def create_model(*args):
     filename = os.path.join(model_path, 'model.npy')
     status['log'] += 'Save %s\n' % filename
     np.save(filename, data)
+    
+    filename = os.path.join(model_path, 'model.png')
+    if len(size) == 2:
+        plot_circle(centers, radiuses-gap, size, filename, 300)
+    if len(size) >= 3:
+        plot_sphere(centers, radiuses-gap, size, filename, (200, 200))
+    status['log'] += 'Save %s\n' % filename
+
+    status['progress'] = 100
+    status['status'] = 'Done'
+    
+    filename = os.path.join(model_path, 'model.msg')
+    message = {}
+    if len(size) == 2:
+        fraction = calc_area_fraction(centers, radiuses-gap, size)
+    if len(size) >= 3:
+        fraction = calc_volume_fraction(centers, radiuses-gap, size)
+    message['fraction'] = fraction
+    message['num_ball'] = len(radiuses)
+    message['size'] = size
+    message['gap'] = gap
+    with open(filename, 'w', encoding='utf-8') as f:
+        json.dump(message, f, ensure_ascii=False)
+    status['log'] += 'Save %s\n' % filename
+    
+    filename = os.path.join(model_path, 'args.json')
+    status['log'] += 'Save %s\n' % filename
+    with open(filename, 'w', encoding='utf-8') as f:
+        json.dump(args[:-1], f, ensure_ascii=False)
 
     filename = os.path.join(model_path, 'model.log')
     status['log'] += 'Save %s\n' % filename
     with open(filename, 'w', encoding='utf-8') as f:
         f.write(status['log'])
-
-    status['progress'] = 100
-    status['status'] = 'Done'
-    
-    filename = os.path.join(model_path, 'args.json')
-    status['log'] += 'Save %s\n' % filename
-    with open(filename, 'w', encoding='utf-8') as f:
-        json.dump(args, f, ensure_ascii=False)
-
+        
     return 0
 
 
 if __name__ == "__main__":
     ncircle = 32
     size = [[0, 1], [0, 1]]
+    # size = [[0, 1], [0, 1], [0, 1]]
     gap = 0.0
     num_add = 1000
     max_iter = 100
