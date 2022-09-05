@@ -5,20 +5,18 @@
 >4D: 超立方体区域填充超球
 """
 
-# 第三方库
-import os
 import json
+import os
+
 import numpy as np
 from scipy.spatial.distance import cdist
 
-
-# 本地文件
 try:
     from calc_fraction import calc_area_fraction, calc_volume_fraction
-    from plot_model import plot_circle, plot_sphere, plot_distribution
+    from plot_model import plot_circle, plot_distribution, plot_sphere
 except ImportError:
     from psic.calc_fraction import calc_area_fraction, calc_volume_fraction
-    from psic.plot_model import plot_circle, plot_sphere, plot_distribution
+    from psic.plot_model import plot_circle, plot_distribution, plot_sphere
 
 
 def rayleigh_set(scale, size):
