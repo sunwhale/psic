@@ -14,11 +14,11 @@ from scipy.spatial.distance import cdist
 
 # 本地文件
 try:
-    from psic.calc_fraction import calc_area_fraction, calc_volume_fraction
-    from psic.plot_model import plot_circle, plot_sphere, plot_distribution
-except:
     from calc_fraction import calc_area_fraction, calc_volume_fraction
     from plot_model import plot_circle, plot_sphere, plot_distribution
+except:
+    from psic.calc_fraction import calc_area_fraction, calc_volume_fraction
+    from psic.plot_model import plot_circle, plot_sphere, plot_distribution
 
 
 def rayleigh_set(scale, size):

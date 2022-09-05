@@ -9,7 +9,7 @@ from matplotlib.patches import Circle
 from mayavi import mlab
 
 
-def plot_circle(centers, radiuses, size, filename, dpi):
+def plot_circle(centers, radiuses, size, filename, dpi=300):
     fig, ax = plt.subplots(1, 1, figsize=(6,6))
     for i in range(len(centers)):
         C = Circle(centers[i], radius=radiuses[i], facecolor=(1, 1, 1, 1), edgecolor=(0, 0, 0, 1), linewidth=None)
@@ -23,7 +23,7 @@ def plot_circle(centers, radiuses, size, filename, dpi):
     fig.savefig(filename, dpi=dpi, transparent=False)
 
 
-def plot_sphere(centers, radiuses, size, filename, dpi):
+def plot_sphere(centers, radiuses, size, filename, dpi=(100, 100)):
     x, y, z, r = centers[:, 0], centers[:, 1], centers[:, 2], radiuses[:, 0]
     fig = mlab.points3d(x, y, z, r*2, scale_factor=1, resolution=30, mode="sphere")
     mlab.outline(fig)
