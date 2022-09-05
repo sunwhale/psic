@@ -372,34 +372,25 @@ def packing_spheres_in_cube(ncircle, radius_sets, size, gap, num_add, max_iter, 
 
         if count >= max_iter:
             print('The number of iterations is out of range.')
-
+        
         try:
             if i % int(num_add/10) == 0:
                 if len(size) == 2:
                     fraction = calc_area_fraction(centers_1, radiuses_1-gap, size)
                     print(i, n, fraction)
-                    try:
-                        status['log'] += '%s, %s, %s\n' % (i, n, fraction)
-                    except:
-                        pass
+                    status['log'] += '%s, %s, %s\n' % (i, n, fraction)
 
                 if len(size) == 3:
                     fraction = calc_volume_fraction(centers_1, radiuses_1-gap, size)
-                    print(i, n, fraction)
-                    try:
-                        status['log'] += '%s, %s, %s\n' % (i, n, fraction)
-                    except:
-                        pass
-        except:
-            pass
+                    status['log'] += '%s, %s, %s\n' % (i, n, fraction)
+
+        except ZeroDivisionError:
+            print(ZeroDivisionError)
 
         if len(radius_sets_0) <= n+ncircle:
             break
         
-        try:
-            status['progress'] = int(i/num_add*100)
-        except:
-            pass
+        status['progress'] = int(i/num_add*100)
 
     return centers_1, radiuses_1
 
