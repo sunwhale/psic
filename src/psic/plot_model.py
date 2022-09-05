@@ -11,7 +11,7 @@ from mayavi import mlab
 
 def plot_circle(centers, radiuses, size, filename, dpi=300):
     fig, ax = plt.subplots(1, 1, figsize=(6,6))
-    for i, center in enumerate(centers):
+    for i, _ in enumerate(centers):
         C = Circle(centers[i], radius=radiuses[i], facecolor=(1, 1, 1, 1), edgecolor=(0, 0, 0, 1), linewidth=None)
         ax.add_patch(C)
     ax.axis('equal')
