@@ -73,8 +73,7 @@ def calc_minor_area(chrod_length, r):
 def calc_area_fraction(centers, radiuses, size):
     xmin, xmax, ymin, ymax = size[0][0], size[0][1], size[1][0], size[1][1]
     circles_area = 0
-    for i in range(len(centers)):
-        center = centers[i]
+    for i, center in enumerate(centers):
         r = radiuses[i][0]
         num_int = cross_num(center, r, xmin, xmax, ymin, ymax)
         chrod_length = 0
@@ -86,7 +85,6 @@ def calc_area_fraction(centers, radiuses, size):
                     cross_points.append(point)
             if len(cross_points) > 0:
                 chrod_length = np.sqrt((cross_points[0][0]-cross_points[1][0])**2+(cross_points[0][1]-cross_points[1][1])**2)
-        
         area = 0
         if is_in_rectangle(center, xmin, xmax, ymin, ymax) and num_int == 0:
             area = np.pi*r**2
@@ -116,7 +114,9 @@ if __name__ == "__main__":
     radiuses = [[0.21479203], [0.26824568], [0.1926382], [0.0552244], [0.10880974], [0.18590287],
                 [0.0876847], [0.10656674], [0.07639095], [0.07590341], [0.09191926], [0.07027798], [0.08319493]]
 
-    xmin, xmax = 0, 1
-    ymin, ymax = 0, 1
+    size = [[0, 1], [0, 1]]
     
-    print('圆形面积占比', calc_area_fraction(np.array(centers), np.array(radiuses), xmin, xmax, ymin, ymax))
+    centers = np.array(centers)
+    radiuses = np.array(radiuses)
+
+    print('圆形面积占比', calc_area_fraction(centers, radiuses, size))

@@ -4,7 +4,6 @@
 """
 
 import numpy as np
-import matplotlib.pyplot as plt
 
 # 本地文件
 try:

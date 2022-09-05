@@ -16,7 +16,7 @@ from scipy.spatial.distance import cdist
 try:
     from calc_fraction import calc_area_fraction, calc_volume_fraction
     from plot_model import plot_circle, plot_sphere, plot_distribution
-except:
+except ImportError:
     from psic.calc_fraction import calc_area_fraction, calc_volume_fraction
     from psic.plot_model import plot_circle, plot_sphere, plot_distribution
 
@@ -47,7 +47,7 @@ def crash_time(center_1, center_2, velocity_1, velocity_2, r_1, r_2, dt):
 
     Returns
     -------
-    tc : 
+    tc : float
         两圆/球体发生碰撞的时间
     """
     a = np.sum((velocity_2-velocity_1)**2)
@@ -201,7 +201,7 @@ def create_centers(ncircle, size):
 
     """
     centers = np.random.rand(ncircle, len(size))
-    for i in range(len(size)):
+    for i, _ in enumerate(size):
         centers[:, i] = centers[:, i]*(size[i][1]-size[i][0])+size[i][0]
     return centers.astype('float32')
 
@@ -253,11 +253,11 @@ def update_radius_sets(radius_sets, radiuses):
     return radius_sets
 
 
-def packing_hyperspheres_in_hypercube(ncircle, radius_sets, size, gap, num_add, max_iter, dt0, dt_interval, status):
+def packing_spheres_in_cube(ncircle, radius_sets, size, gap, num_add, max_iter, dt0, dt_interval, status):
     """
     向区域内填充圆/球
     
-    packing_hyperspheres_in_hypercube(ncircle, radius_sets, size, gap, num_add, max_iter, dt0, dt_interval, status)
+    packing_spheres_in_cube(ncircle, radius_sets, size, gap, num_add, max_iter, dt0, dt_interval, status)
 
     Parameters
     ----------
@@ -472,7 +472,7 @@ def create_model(*args):
 
     status['status'] = 'Running'
 
-    centers, radiuses = packing_hyperspheres_in_hypercube(ncircle, radius_sets, size, gap, num_add, max_iter, dt0, dt_interval, status)
+    centers, radiuses = packing_spheres_in_cube(ncircle, radius_sets, size, gap, num_add, max_iter, dt0, dt_interval, status)
 
     data = np.concatenate((centers, radiuses), axis=1)
 
