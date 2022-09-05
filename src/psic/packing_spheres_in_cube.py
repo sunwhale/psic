@@ -15,10 +15,10 @@ from scipy.spatial.distance import cdist
 # 本地文件
 try:
     from psic.calc_fraction import calc_area_fraction, calc_volume_fraction
-    from psic.plot_model import plot_circle, plot_sphere
+    from psic.plot_model import plot_circle, plot_sphere, plot_distribution
 except:
     from calc_fraction import calc_area_fraction, calc_volume_fraction
-    from plot_model import plot_circle, plot_sphere
+    from plot_model import plot_circle, plot_sphere, plot_distribution
 
 
 def rayleigh_set(scale, size):
@@ -448,6 +448,9 @@ def create_model(*args):
     生成模型文件：model.npy
     生成参数文件：args.json
     生成日志文件：model.log
+    生成信息文件：model.msg
+    生成模型图片：model.png
+    生成分布图片：density.png
     
     Returns
     -------
@@ -482,6 +485,10 @@ def create_model(*args):
         plot_circle(centers, radiuses-gap, size, filename, 300)
     if len(size) >= 3:
         plot_sphere(centers, radiuses-gap, size, filename, (200, 200))
+    status['log'] += 'Save %s\n' % filename
+    
+    filename = os.path.join(model_path, 'density.png')
+    plot_distribution(radiuses-gap, filename, 300)
     status['log'] += 'Save %s\n' % filename
 
     status['progress'] = 100

@@ -10,7 +10,7 @@ from mayavi import mlab
 
 
 def plot_circle(centers, radiuses, size, filename, dpi):
-    fig, ax = plt.subplots(1, 1)
+    fig, ax = plt.subplots(1, 1, figsize=(6,6))
     for i in range(len(centers)):
         C = Circle(centers[i], radius=radiuses[i], facecolor=(1, 1, 1, 1), edgecolor=(0, 0, 0, 1), linewidth=None)
         ax.add_patch(C)
@@ -18,7 +18,9 @@ def plot_circle(centers, radiuses, size, filename, dpi):
     ax.set_box_aspect(1)
     ax.set_xlim(size[0])
     ax.set_ylim(size[1])
-    fig.savefig(filename, dpi=dpi, transparent=True)
+    ax.set_xlabel('x, mm')
+    ax.set_ylabel('y, mm')
+    fig.savefig(filename, dpi=dpi, transparent=False)
 
 
 def plot_sphere(centers, radiuses, size, filename, dpi):
@@ -29,13 +31,22 @@ def plot_sphere(centers, radiuses, size, filename, dpi):
     mlab.savefig(filename, figure=fig, size=dpi)
     fig.module_manager.source.save_output('model.vtk')
     mlab.close(all=True)
-    
+
+
+def plot_distribution(radiuses, filename, dpi):
+    fig, ax = plt.subplots(1, 1, figsize=(6,6))
+    plt.hist(radiuses*1000, bins=10, density=True)
+    plt.xlabel('Radius, $\\mu$m')
+    plt.ylabel('Density')
+    fig.savefig(filename, dpi=dpi, transparent=False)
+
 
 if __name__ == "__main__":
     circles = np.load('model.npy')
     dim = circles.shape[-1]-1
     centers = circles[:, 0:dim]
     radiuses = circles[:, dim:dim+1]
-    plot_circle(centers, radiuses, [[0,1], [0,1]], 'model.png', 300)
-    plot_sphere(centers, radiuses, [[0, 1], [0, 1], [0, 1]], 'model.png', (400,400))
+    # plot_circle(centers, radiuses, [[0,1], [0,1]], 'model.png', 300)
+    # plot_sphere(centers, radiuses, [[0, 1], [0, 1], [0, 1]], 'model.png', (400,400))
+    # plot_distribution(radiuses, 'density.png', 300)
 
