@@ -21,6 +21,7 @@ def plot_circle(centers, radiuses, size, filename, dpi=300):
     ax.set_xlabel('x, mm')
     ax.set_ylabel('y, mm')
     fig.savefig(filename, dpi=dpi, transparent=False)
+    plt.close(fig)
 
 
 def plot_sphere(centers, radiuses, size, filename, dpi=(100, 100)):
@@ -39,6 +40,7 @@ def plot_distribution(radiuses, filename, dpi):
     ax.set_xlabel('Radius, $\\mu$m')
     ax.set_ylabel('Density')
     fig.savefig(filename, dpi=dpi, transparent=False)
+    plt.close(fig)
 
 
 if __name__ == "__main__":
@@ -46,7 +48,7 @@ if __name__ == "__main__":
     dim = circles.shape[-1]-1
     centers = circles[:, 0:dim]
     radiuses = circles[:, dim:dim+1]
-    # plot_circle(centers, radiuses, [[0,1], [0,1]], 'model.png', 300)
+    plot_circle(centers, radiuses, [[0,1], [0,1]], 'model.png', 300)
     # plot_sphere(centers, radiuses, [[0, 1], [0, 1], [0, 1]], 'model.png', (400,400))
     # plot_distribution(radiuses, 'density.png', 300)
 

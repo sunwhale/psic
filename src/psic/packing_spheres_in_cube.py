@@ -393,15 +393,13 @@ def packing_spheres_in_cube(ncircle, radius_sets, size, gap, num_add, max_iter, 
     return centers_1, radiuses_1
 
 
-def create_model(*args):
+def create_model(ncircle, size, gap, num_add, max_iter, dt0, dt_interval, rayleigh_para, num_ball, rad_min, rad_max, model_path, status):
     """
     根据参数列表生成填充模型
     
-    create_model(*args)
+    create_model(ncircle, size, gap, num_add, max_iter, dt0, dt_interval, rayleigh_para, num_ball, rad_min, rad_max, model_path, status)
     
-    args = (ncircle, size, gap, num_add, max_iter, dt0, dt_interval, rayleigh_para, num_ball, rad_min, rad_max, model_path, status)
-    
-    args
+    Parameters
     ----------
     ncircle : int
         单次向矩形区域内增加圆的数量
@@ -447,7 +445,7 @@ def create_model(*args):
 
     """
     
-    ncircle, size, gap, num_add, max_iter, dt0, dt_interval, rayleigh_para, num_ball, rad_min, rad_max, model_path, status = args
+    args = ncircle, size, gap, num_add, max_iter, dt0, dt_interval, rayleigh_para, num_ball, rad_min, rad_max, model_path, status
 
     # 生成需要填充的半径集合
     radius_sets = rayleigh_set(rayleigh_para, num_ball)
