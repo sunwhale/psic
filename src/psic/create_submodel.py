@@ -56,15 +56,15 @@ def get_submodel(centers, radiuses, subsize):
     return sub_centers, sub_radiuses
 
 
-def create_submodel(model_path, model_id, size, ndiv, gap, out_path, status):
+def create_submodel(model_file, model_id, size, ndiv, gap, out_path, status):
     """
     根据主模型生成ndiv等分后的子模型
 
-    create_submodel(model, size, ndiv)
+    create_submodel(model_file, model_id, size, ndiv, gap, out_path, status)
 
     Parameters
     ----------
-    model_path : path
+    model_file : filepath
         主模型文件路径
     model_id : int
         主模型编号
@@ -94,9 +94,9 @@ def create_submodel(model_path, model_id, size, ndiv, gap, out_path, status):
     """
 
     status['status'] = 'Running'
-    args = model_path, model_id, size, ndiv, gap, out_path, status
+    args = model_file, model_id, size, ndiv, gap, out_path, status
 
-    circles = np.load(model_path)
+    circles = np.load(model_file)
     dim = circles.shape[-1]-1
     centers = circles[:, 0:dim]
     radiuses = circles[:, dim:dim+1]
