@@ -3,8 +3,8 @@
 生成规则网格
 """
 
-import os
 import json
+import os
 
 import numpy as np
 
