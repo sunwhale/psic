@@ -29,11 +29,12 @@ def plot_circle(centers, radiuses, size, filename, dpi=300):
 
 def plot_sphere(centers, radiuses, size, filename, dpi=(100, 100)):
     x, y, z, r = centers[:, 0], centers[:, 1], centers[:, 2], radiuses[:, 0]
-    fig = mlab.points3d(x, y, z, r*2, scale_factor=1, resolution=30, mode="sphere")
+    mlab.options.offscreen = True
+    fig = mlab.figure(size=(500,500), bgcolor=(1,1,1))
+    mlab.points3d(x, y, z, r*2, scale_factor=1, resolution=30, mode="sphere")
     mlab.outline(fig)
     mlab.view(distance=4)
     mlab.savefig(filename, figure=fig, size=dpi)
-    fig.module_manager.source.save_output('model.vtk')
     mlab.close(all=True)
 
 
