@@ -146,6 +146,7 @@ def create_submodel(model_file, model_id, size, ndiv, gap, out_path, status):
         message['location'] = (subsize+c[:, i].reshape(-1, 1)).tolist()
         message['size'] = size.tolist()
         message['gap'] = gap
+        message['ndiv'] = ndiv
         with open(filename, 'w', encoding='utf-8') as f:
             json.dump(message, f, ensure_ascii=False)
 
