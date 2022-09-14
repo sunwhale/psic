@@ -309,15 +309,13 @@ def packing_spheres_in_cube(ncircle, radius_sets, size, gap, num_add, max_iter, 
         velocities_new = create_velocities(ncircle, size)
         radiuses_new = create_radiuses(ncircle, radius_sets)
 
-        is_crash_old = is_crash_index(
-            centers_0, radiuses_0, centers_new, radiuses_new)
+        is_crash_old = is_crash_index(centers_0, radiuses_0, centers_new, radiuses_new)
         is_crash_self = is_crash_index(centers_new, radiuses_new)
         is_crash = np.concatenate((is_crash_old, is_crash_self), axis=0)
         is_crash = np.unique(is_crash)
         is_not_crash = np.delete(np.arange(len(centers_new)), is_crash)
 
-        radius_sets = update_radius_sets(
-            radius_sets, radiuses_new[is_not_crash])
+        radius_sets = update_radius_sets(radius_sets, radiuses_new[is_not_crash])
 
         centers_new = np.delete(centers_new, is_crash, 0)
         velocities_new = np.delete(velocities_new, is_crash, 0)
@@ -385,7 +383,7 @@ def packing_spheres_in_cube(ncircle, radius_sets, size, gap, num_add, max_iter, 
         except ZeroDivisionError:
             print(ZeroDivisionError)
 
-        if len(radius_sets_0) <= n+ncircle:
+        if len(radius_sets_0) <= n+ncircle+1:
             break
         
         status['progress'] = int(i/num_add*100)
@@ -509,14 +507,14 @@ def create_model(ncircle, size, gap, num_add, max_iter, dt0, dt_interval, raylei
 
 
 if __name__ == "__main__":
-    ncircle = 32
-    size = [[0, 1], [0, 1]]
+    ncircle = 2
+    size = [[0, 0.1], [0, 0.1]]
     # size = [[0, 1], [0, 1], [0, 1]]
     gap = 0.0
-    num_add = 1000
+    num_add = 10000
     max_iter = 100
     dt0 = 0.01
-    dt_interval = 1000
+    dt_interval = 10000
     rayleigh_para = 20
     num_ball = 1200
     rad_min = 10
