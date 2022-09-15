@@ -416,14 +416,14 @@ def mesh(gap, dimension, node_shape, element_type, model_path, output_path, stat
             element_sets[index] = int(i) + 1
 
     element_sets_names = np.unique(element_sets)
-    
+
     element_sets_dict = {}
     for name in element_sets_names:
         element_sets_dict[int(name)] = []
         element_sets_dict['MATRIX'] = []
         element_sets_dict['PARTICLES'] = []
         element_sets_dict['ALL'] = []
-    for i in range(len(element_sets)):
+    for i, _ in enumerate(element_sets):
         element_sets_dict[int(element_sets[i])].append(element_index[i]+1)
         if int(element_sets[i]) == 0:
             element_sets_dict['MATRIX'].append(element_index[i]+1)
