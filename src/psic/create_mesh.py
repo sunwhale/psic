@@ -433,21 +433,22 @@ def mesh(gap, dimension, node_shape, element_type, model_path, output_path, stat
 
     write_input_file(dim, nodes, elements, element_type, element_sets_dict, output_path)
     
-    status['message']['element_sets_names'] = str(element_sets_names)
+    print(str(element_sets_names))
+    status['message']['element_sets_names'] = element_sets_names.tolist()
     status['message']['nodes_number'] = len(node_index)
     status['message']['elements_number'] = len(element_index)
 
 
 def create_mesh(gap, size, dimension, node_shape, element_type, model_path, output_path, status):
 
-    gap, size, dimension, node_shape, element_type, model_path, output_path, status = args
+    args = gap, size, dimension, node_shape, element_type, model_path, output_path, status
 
     status['status'] = 'Running'
     status['message'] = {}
 
     mesh(gap, dimension, node_shape, element_type, model_path, output_path, status)
 
-    filename = os.path.join(model_path, 'model.msg')
+    filename = os.path.join(output_path, 'model.msg')
     status['message']['node_shape'] = node_shape
     status['message']['dimension'] = dimension
     status['message']['size'] = size
@@ -457,11 +458,11 @@ def create_mesh(gap, size, dimension, node_shape, element_type, model_path, outp
     with open(filename, 'w', encoding='utf-8') as f:
         json.dump(status['message'], f, ensure_ascii=False)
         
-    filename = os.path.join(model_path, 'args.json')
+    filename = os.path.join(output_path, 'args.json')
     with open(filename, 'w', encoding='utf-8') as f:
         json.dump(args[:-1], f, ensure_ascii=False)
 
-    filename = os.path.join(model_path, 'model.log')
+    filename = os.path.join(output_path, 'model.log')
     with open(filename, 'w', encoding='utf-8') as f:
         f.write(status['log'])
 
