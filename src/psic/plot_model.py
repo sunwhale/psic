@@ -12,7 +12,7 @@ from matplotlib.patches import Circle
 from mayavi import mlab
 
 
-def plot_circle(centers, radiuses, size, filename, dpi=300):
+def plot_circle(centers, radiuses, size, filename, dpi=150):
     fig, ax = plt.subplots(1, 1, figsize=(6,6))
     for i, _ in enumerate(centers):
         C = Circle(centers[i], radius=radiuses[i], facecolor=(1, 1, 1, 1), edgecolor=(0, 0, 0, 1), linewidth=None)
@@ -27,7 +27,7 @@ def plot_circle(centers, radiuses, size, filename, dpi=300):
     plt.close(fig)
 
 
-def plot_sphere(centers, radiuses, size, filename, dpi=(100, 100)):
+def plot_sphere(centers, radiuses, size, filename, dpi=(500, 500)):
     x, y, z, r = centers[:, 0], centers[:, 1], centers[:, 2], radiuses[:, 0]
     mlab.options.offscreen = True
     fig = mlab.figure(size=(500,500), bgcolor=(1,1,1))
@@ -38,7 +38,7 @@ def plot_sphere(centers, radiuses, size, filename, dpi=(100, 100)):
     mlab.close(all=True)
 
 
-def plot_distribution(radiuses, filename, dpi):
+def plot_distribution(radiuses, filename, dpi=150):
     fig, ax = plt.subplots(1, 1, figsize=(6,6))
     plt.hist(radiuses*1000, bins=10, density=True)
     ax.set_xlabel('Radius, $\\mu$m')

@@ -467,13 +467,13 @@ def create_model(ncircle, size, gap, num_add, max_iter, dt0, dt_interval, raylei
     
     filename = os.path.join(model_path, 'model.png')
     if len(size) == 2:
-        plot_circle(centers, radiuses-gap, size, filename, 300)
+        plot_circle(centers, radiuses-gap, size, filename, 150)
     if len(size) >= 3:
-        plot_sphere(centers, radiuses-gap, size, filename, (200, 200))
+        plot_sphere(centers, radiuses-gap, size, filename, (500, 500))
     status['log'] += 'Save %s\n' % filename
     
     filename = os.path.join(model_path, 'density.png')
-    plot_distribution(radiuses-gap, filename, 300)
+    plot_distribution(radiuses-gap, filename, 150)
     status['log'] += 'Save %s\n' % filename
 
     status['progress'] = 100

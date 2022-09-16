@@ -125,12 +125,12 @@ def create_submodel(model_file, model_id, size, ndiv, gap, out_path, status):
 
         filename = os.path.join(submodel_path, 'model.png')
         if len(size) == 2:
-            plot_circle(sub_centers, sub_radiuses-gap, subsize, filename, 300)
+            plot_circle(sub_centers, sub_radiuses-gap, subsize, filename, 150)
         if len(size) >= 3:
-            plot_sphere(sub_centers, sub_radiuses-gap, subsize, filename, (200, 200))
+            plot_sphere(sub_centers, sub_radiuses-gap, subsize, filename, (500, 500))
 
         filename = os.path.join(submodel_path, 'density.png')
-        plot_distribution(sub_radiuses-gap, filename, 300)
+        plot_distribution(sub_radiuses-gap, filename, 150)
 
         filename = os.path.join(submodel_path, 'model.msg')
         message = {}
