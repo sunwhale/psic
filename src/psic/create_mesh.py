@@ -334,6 +334,61 @@ def write_input_file(dim, nodes, elements, element_type, element_sets_dict, outp
             end = ','
         outfile.write(str(node+1) + end)
 
+    if dim == 2:
+        x0 = min(nodes[1])
+        x1 = max(nodes[1])
+        y0 = min(nodes[2])
+        y1 = max(nodes[2])
+        node_sets_dict = {
+            'X0': nodes[0][nodes[1] == x0],
+            'X1': nodes[0][nodes[1] == x1],
+            'Y0': nodes[0][nodes[2] == y0],
+            'Y1': nodes[0][nodes[2] == y1],
+            'X0Y0': nodes[0][(nodes[1] == x0) & (nodes[2] == y0)],
+            'X0Y1': nodes[0][(nodes[1] == x0) & (nodes[2] == y1)],
+            'X1Y0': nodes[0][(nodes[1] == x1) & (nodes[2] == y0)],
+            'X1Y1': nodes[0][(nodes[1] == x1) & (nodes[2] == y1)],
+            'X0-X0Y0': nodes[0][(nodes[1] == x0) & (~((nodes[1] == x0) & (nodes[2] == y0)))],
+            'X1-X1Y0': nodes[0][(nodes[1] == x1) & (~((nodes[1] == x1) & (nodes[2] == y0)))]
+        }
+
+    if dim == 3:
+        x0 = min(nodes[1])
+        x1 = max(nodes[1])
+        y0 = min(nodes[2])
+        y1 = max(nodes[2])
+        z0 = min(nodes[3])
+        z1 = max(nodes[3])
+        node_sets_dict = {
+            'X0': nodes[0][nodes[1] == x0],
+            'X1': nodes[0][nodes[1] == x1],
+            'Y0': nodes[0][nodes[2] == y0],
+            'Y1': nodes[0][nodes[2] == y1],
+            'Z0': nodes[0][nodes[3] == z0],
+            'Z1': nodes[0][nodes[3] == z1],
+            'X0Y0Z0': nodes[0][(nodes[1] == x0) & (nodes[2] == y0) & (nodes[3] == z0)],
+            'X0Y0Z1': nodes[0][(nodes[1] == x0) & (nodes[2] == y0) & (nodes[3] == z1)],
+            'X0Y1Z0': nodes[0][(nodes[1] == x0) & (nodes[2] == y1) & (nodes[3] == z0)],
+            'X0Y1Z1': nodes[0][(nodes[1] == x0) & (nodes[2] == y1) & (nodes[3] == z1)],
+            'X1Y0Z0': nodes[0][(nodes[1] == x1) & (nodes[2] == y0) & (nodes[3] == z0)],
+            'X1Y0Z1': nodes[0][(nodes[1] == x1) & (nodes[2] == y0) & (nodes[3] == z1)],
+            'X1Y1Z0': nodes[0][(nodes[1] == x1) & (nodes[2] == y1) & (nodes[3] == z0)],
+            'X1Y1Z1': nodes[0][(nodes[1] == x1) & (nodes[2] == y1) & (nodes[3] == z1)]
+        }
+        
+    for key in node_sets_dict.keys():
+        outfile.write('*Nset, elset=%s\n' % key)
+        count = 0
+        for node in np.nditer(node_sets_dict[key]):
+            count += 1
+            if count == len(node_sets_dict[key]):
+                end = '\n'
+            elif count % 8 == 0:
+                end = '\n'
+            else:
+                end = ','
+            outfile.write(str(node+1) + end)
+                
     outfile.write('*End Part\n')
     outfile.close()
 
@@ -432,8 +487,7 @@ def mesh(gap, dimension, node_shape, element_type, model_path, output_path, stat
         element_sets_dict['ALL'].append(element_index[i]+1)
 
     write_input_file(dim, nodes, elements, element_type, element_sets_dict, output_path)
-    
-    print(str(element_sets_names))
+
     status['message']['element_sets_names'] = element_sets_names.tolist()
     status['message']['nodes_number'] = len(node_index)
     status['message']['elements_number'] = len(element_index)
@@ -443,7 +497,6 @@ def create_mesh(gap, size, dimension, node_shape, element_type, model_path, outp
 
     args = gap, size, dimension, node_shape, element_type, model_path, output_path, status
 
-    status['status'] = 'Running'
     status['message'] = {}
 
     mesh(gap, dimension, node_shape, element_type, model_path, output_path, status)
@@ -461,13 +514,6 @@ def create_mesh(gap, size, dimension, node_shape, element_type, model_path, outp
     filename = os.path.join(output_path, 'args.json')
     with open(filename, 'w', encoding='utf-8') as f:
         json.dump(args[:-1], f, ensure_ascii=False)
-
-    filename = os.path.join(output_path, 'model.log')
-    with open(filename, 'w', encoding='utf-8') as f:
-        f.write(status['log'])
-
-    status['progress'] = 100
-    status['status'] = 'Done'
 
     return 0
 
