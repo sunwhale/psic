@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="psic",
-    version="0.0.8.3",
+    version="0.0.8.6",
     author="Jingyu Sun",
     author_email="sun.jingyu@outlook.com",
     description="Packing spheres in cube",

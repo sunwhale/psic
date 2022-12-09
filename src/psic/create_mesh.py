@@ -377,7 +377,7 @@ def write_input_file(dim, nodes, elements, element_type, element_sets_dict, outp
         }
         
     for key in node_sets_dict.keys():
-        outfile.write('*Nset, elset=%s\n' % key)
+        outfile.write('*Nset, nset=%s\n' % key)
         count = 0
         for node in np.nditer(node_sets_dict[key]):
             count += 1
@@ -388,8 +388,7 @@ def write_input_file(dim, nodes, elements, element_type, element_sets_dict, outp
             else:
                 end = ','
             outfile.write(str(node+1) + end)
-                
-    outfile.write('*End Part\n')
+
     outfile.close()
 
 
