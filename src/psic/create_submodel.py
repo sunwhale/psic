@@ -2,7 +2,6 @@
 """
 生成规则网格
 """
-
 import json
 import os
 
@@ -43,7 +42,7 @@ def get_submodel(centers, radiuses, subsize):
     is_in_cube_matrix = np.concatenate((lower, upper), axis=1)
 
     # 在子区域内部的布尔型列表
-    is_in_cube = np.sum(is_in_cube_matrix, axis=1) >= 2*len(subsize)
+    is_in_cube = np.sum(is_in_cube_matrix, axis=1) >= 2 * len(subsize)
 
     sub_centers = centers[is_in_cube]
     sub_radiuses = radiuses[is_in_cube]
@@ -92,20 +91,20 @@ def create_submodel(model_file, model_id, size, ndiv, gap, out_path, status):
     args = model_file, model_id, size, ndiv, gap, out_path, status
 
     circles = np.load(model_file)
-    dim = circles.shape[-1]-1
+    dim = circles.shape[-1] - 1
     centers = circles[:, 0:dim]
-    radiuses = circles[:, dim:dim+1]
+    radiuses = circles[:, dim:dim + 1]
     size = np.array(size)
-    subsize = size/ndiv
-    a = [np.arange(s[0], s[1], s[1]/ndiv) for s in size]
+    subsize = size / ndiv
+    a = [np.arange(s[0], s[1], s[1] / ndiv) for s in size]
     b = np.meshgrid(*a)
     c = np.array([bb.flatten() for bb in b])
 
     for i in range(c.shape[1]):
 
-        status['progress'] = int(i/c.shape[1]*100)
+        status['progress'] = int(i / c.shape[1] * 100)
 
-        submodel_id = i+1
+        submodel_id = i + 1
         shift_centers = centers - c[:, i]
         sub_centers, sub_radiuses = get_submodel(shift_centers, radiuses, subsize)
         data = np.concatenate((sub_centers, sub_radiuses), axis=1)
@@ -120,25 +119,25 @@ def create_submodel(model_file, model_id, size, ndiv, gap, out_path, status):
 
         filename = os.path.join(submodel_path, 'model.png')
         if len(size) == 2:
-            plot_circle(sub_centers, sub_radiuses-gap, subsize, filename, 150)
+            plot_circle(sub_centers, sub_radiuses - gap, subsize, filename, 150)
         if len(size) >= 3:
-            plot_sphere(sub_centers, sub_radiuses-gap, subsize, filename, (500, 500))
+            plot_sphere(sub_centers, sub_radiuses - gap, subsize, filename, (500, 500))
 
         filename = os.path.join(submodel_path, 'density.png')
-        plot_distribution(sub_radiuses-gap, filename, 150)
+        plot_distribution(sub_radiuses - gap, filename, 150)
 
         filename = os.path.join(submodel_path, 'model.msg')
         message = {}
         if len(size) == 2:
-            fraction = calc_area_fraction(sub_centers, sub_radiuses-gap, subsize)
+            fraction = calc_area_fraction(sub_centers, sub_radiuses - gap, subsize)
         if len(size) >= 3:
-            fraction = calc_volume_fraction(sub_centers, sub_radiuses-gap, subsize)
+            fraction = calc_volume_fraction(sub_centers, sub_radiuses - gap, subsize)
         message['model_id'] = model_id
         message['submodel_id'] = submodel_id
         message['fraction'] = fraction
         message['num_ball'] = len(sub_radiuses)
         message['subsize'] = subsize.tolist()
-        message['location'] = (subsize+c[:, i].reshape(-1, 1)).tolist()
+        message['location'] = (subsize + c[:, i].reshape(-1, 1)).tolist()
         message['size'] = size.tolist()
         message['gap'] = gap
         message['ndiv'] = ndiv

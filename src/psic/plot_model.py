@@ -2,7 +2,6 @@
 """
 
 """
-
 import matplotlib
 
 matplotlib.use('Agg')
@@ -13,7 +12,7 @@ from mayavi import mlab
 
 
 def plot_circle(centers, radiuses, size, filename, dpi=150):
-    fig, ax = plt.subplots(1, 1, figsize=(6,6))
+    fig, ax = plt.subplots(1, 1, figsize=(6, 6))
     for i, _ in enumerate(centers):
         C = Circle(centers[i], radius=radiuses[i], facecolor=(1, 1, 1, 1), edgecolor=(0, 0, 0, 1), linewidth=None)
         ax.add_patch(C)
@@ -30,8 +29,8 @@ def plot_circle(centers, radiuses, size, filename, dpi=150):
 def plot_sphere(centers, radiuses, size, filename, dpi=(500, 500)):
     x, y, z, r = centers[:, 0], centers[:, 1], centers[:, 2], radiuses[:, 0]
     mlab.options.offscreen = True
-    fig = mlab.figure(size=(500,500), bgcolor=(1,1,1))
-    mlab.points3d(x, y, z, r*2, scale_factor=1, resolution=30, mode="sphere")
+    fig = mlab.figure(size=(500, 500), bgcolor=(1, 1, 1))
+    mlab.points3d(x, y, z, r * 2, scale_factor=1, resolution=30, mode="sphere")
     mlab.outline(fig)
     mlab.view(distance=4)
     mlab.savefig(filename, figure=fig, size=dpi)
@@ -39,8 +38,8 @@ def plot_sphere(centers, radiuses, size, filename, dpi=(500, 500)):
 
 
 def plot_distribution(radiuses, filename, dpi=150):
-    fig, ax = plt.subplots(1, 1, figsize=(6,6))
-    plt.hist(radiuses*1000, bins=10, density=True)
+    fig, ax = plt.subplots(1, 1, figsize=(6, 6))
+    plt.hist(radiuses * 1000, bins=10, density=True)
     ax.set_xlabel('Radius, $\\mu$m')
     ax.set_ylabel('Density')
     fig.savefig(filename, dpi=dpi, transparent=False)
@@ -49,10 +48,9 @@ def plot_distribution(radiuses, filename, dpi=150):
 
 if __name__ == "__main__":
     circles = np.load('model.npy')
-    dim = circles.shape[-1]-1
+    dim = circles.shape[-1] - 1
     centers = circles[:, 0:dim]
-    radiuses = circles[:, dim:dim+1]
-    plot_circle(centers, radiuses, [[0,1], [0,1]], 'model.png', 300)
+    radiuses = circles[:, dim:dim + 1]
+    plot_circle(centers, radiuses, [[0, 1], [0, 1]], 'model.png', 300)
     # plot_sphere(centers, radiuses, [[0, 1], [0, 1], [0, 1]], 'model.png', (400,400))
     # plot_distribution(radiuses, 'density.png', 300)
-

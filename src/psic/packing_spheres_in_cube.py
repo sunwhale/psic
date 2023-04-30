@@ -4,7 +4,6 @@
 3D：六面体区域填充球体
 >4D: 超立方体区域填充超球
 """
-
 import json
 import os
 
@@ -44,12 +43,12 @@ def crash_time(center_1, center_2, velocity_1, velocity_2, r_1, r_2, dt):
     tc : float
         两圆/球体发生碰撞的时间
     """
-    a = np.sum((velocity_2-velocity_1)**2)
-    b = 2*np.sum((velocity_2-velocity_1)*(center_2-center_1))
-    c = np.sum((center_2-center_1)**2)-(r_1[0]+r_2[0])**2
-    delta = np.sqrt(b**2-4*a*c)
-    t1 = (-b-delta)/(2*a)
-    t2 = (-b+delta)/(2*a)
+    a = np.sum((velocity_2 - velocity_1) ** 2)
+    b = 2 * np.sum((velocity_2 - velocity_1) * (center_2 - center_1))
+    c = np.sum((center_2 - center_1) ** 2) - (r_1[0] + r_2[0]) ** 2
+    delta = np.sqrt(b ** 2 - 4 * a * c)
+    t1 = (-b - delta) / (2 * a)
+    t2 = (-b + delta) / (2 * a)
     tc = min(t1, t2, dt)
 
     return tc
@@ -60,10 +59,10 @@ def update_crash_velocity(center_1, center_2):
     更新两圆/球碰撞后各自的速度矢量
     两球碰撞后的速度为沿着两球心连线方向互相远离对方的单位矢量
     """
-    v1 = center_2-center_1
-    v2 = center_1-center_2
-    v1 = v1/np.linalg.norm(v1)
-    v2 = v2/np.linalg.norm(v2)
+    v1 = center_2 - center_1
+    v2 = center_1 - center_2
+    v1 = v1 / np.linalg.norm(v1)
+    v2 = v2 / np.linalg.norm(v2)
     return v1, v2
 
 
@@ -85,9 +84,9 @@ def dist_square(X=np.empty(0), Y=np.empty(0)):
 
     """
     if Y.size == 0:
-        dist_square = cdist(X, X)**2
+        dist_square = cdist(X, X) ** 2
     else:
-        dist_square = cdist(X, Y)**2
+        dist_square = cdist(X, Y) ** 2
     return dist_square
 
 
@@ -109,9 +108,9 @@ def r_square(X=np.empty(0), Y=np.empty(0)):
 
     """
     if Y.size == 0:
-        r_square = (X+X.T)**2
+        r_square = (X + X.T) ** 2
     else:
-        r_square = (X+Y.T)**2
+        r_square = (X + Y.T) ** 2
     return r_square
 
 
@@ -196,7 +195,7 @@ def create_centers(ncircle, size):
     """
     centers = np.random.rand(ncircle, len(size))
     for i, _ in enumerate(size):
-        centers[:, i] = centers[:, i]*(size[i][1]-size[i][0])+size[i][0]
+        centers[:, i] = centers[:, i] * (size[i][1] - size[i][0]) + size[i][0]
     return centers.astype('float32')
 
 
@@ -214,7 +213,7 @@ def create_velocities(ncircle, size):
     建立的速度矢量数组，ncircle*维度
 
     """
-    velocities = np.random.rand(ncircle, len(size))*2-1.0
+    velocities = np.random.rand(ncircle, len(size)) * 2 - 1.0
     return velocities.astype('float32')
 
 
@@ -321,7 +320,7 @@ def packing_spheres_in_cube(ncircle, radius_sets, size, gap, num_add, max_iter, 
         velocities_1 = np.concatenate((velocities_0, velocities_new), axis=0)
         radiuses_1 = np.concatenate((radiuses_0, radiuses_new), axis=0)
 
-        n = len(radiuses_1)-1
+        n = len(radiuses_1) - 1
 
         centers_2 = centers_1
         velocities_2 = velocities_1
@@ -364,30 +363,31 @@ def packing_spheres_in_cube(ncircle, radius_sets, size, gap, num_add, max_iter, 
 
         if count >= max_iter:
             print('The number of iterations is out of range.')
-        
+
         try:
-            if i % int(num_add/10) == 0:
+            if i % int(num_add / 10) == 0:
                 if len(size) == 2:
-                    fraction = calc_area_fraction(centers_1, radiuses_1-gap, size)
+                    fraction = calc_area_fraction(centers_1, radiuses_1 - gap, size)
                     print(i, n, fraction)
                     status['log'] += '%s, %s, %s\n' % (i, n, fraction)
 
                 if len(size) == 3:
-                    fraction = calc_volume_fraction(centers_1, radiuses_1-gap, size)
+                    fraction = calc_volume_fraction(centers_1, radiuses_1 - gap, size)
                     status['log'] += '%s, %s, %s\n' % (i, n, fraction)
 
         except ZeroDivisionError:
             print(ZeroDivisionError)
 
-        if len(radius_sets_0) <= n+ncircle+1:
+        if len(radius_sets_0) <= n + ncircle + 1:
             break
-        
-        status['progress'] = int(i/num_add*100)
+
+        status['progress'] = int(i / num_add * 100)
 
     return centers_1, radiuses_1
 
 
-def create_model(ncircle, size, gap, num_add, max_iter, dt0, dt_interval, rayleigh_para, num_ball, rad_min, rad_max, model_path, status):
+def create_model(ncircle, size, gap, num_add, max_iter, dt0, dt_interval, rayleigh_para, num_ball, rad_min, rad_max,
+                 model_path, status):
     """
     根据参数列表生成填充模型
     
@@ -438,7 +438,7 @@ def create_model(ncircle, size, gap, num_add, max_iter, dt0, dt_interval, raylei
     0
 
     """
-    
+
     args = ncircle, size, gap, num_add, max_iter, dt0, dt_interval, rayleigh_para, num_ball, rad_min, rad_max, model_path, status
 
     # 生成需要填充的半径集合
@@ -449,38 +449,39 @@ def create_model(ncircle, size, gap, num_add, max_iter, dt0, dt_interval, raylei
     radius_sets = radius_sets[radius_sets < rad_max]
 
     # 转换为半径，毫米
-    radius_sets *= 0.001/2.0
+    radius_sets *= 0.001 / 2.0
 
     status['status'] = 'Running'
 
-    centers, radiuses = packing_spheres_in_cube(ncircle, radius_sets, size, gap, num_add, max_iter, dt0, dt_interval, status)
+    centers, radiuses = packing_spheres_in_cube(ncircle, radius_sets, size, gap, num_add, max_iter, dt0, dt_interval,
+                                                status)
 
     data = np.concatenate((centers, radiuses), axis=1)
 
     filename = os.path.join(model_path, 'model.npy')
     status['log'] += 'Save %s\n' % filename
     np.save(filename, data)
-    
+
     filename = os.path.join(model_path, 'model.png')
     if len(size) == 2:
-        plot_circle(centers, radiuses-gap, size, filename, 150)
+        plot_circle(centers, radiuses - gap, size, filename, 150)
     if len(size) >= 3:
-        plot_sphere(centers, radiuses-gap, size, filename, (500, 500))
+        plot_sphere(centers, radiuses - gap, size, filename, (500, 500))
     status['log'] += 'Save %s\n' % filename
-    
+
     filename = os.path.join(model_path, 'density.png')
-    plot_distribution(radiuses-gap, filename, 150)
+    plot_distribution(radiuses - gap, filename, 150)
     status['log'] += 'Save %s\n' % filename
 
     status['progress'] = 100
     status['status'] = 'Done'
-    
+
     filename = os.path.join(model_path, 'model.msg')
     message = {}
     if len(size) == 2:
-        fraction = calc_area_fraction(centers, radiuses-gap, size)
+        fraction = calc_area_fraction(centers, radiuses - gap, size)
     if len(size) >= 3:
-        fraction = calc_volume_fraction(centers, radiuses-gap, size)
+        fraction = calc_volume_fraction(centers, radiuses - gap, size)
     message['fraction'] = fraction
     message['num_ball'] = len(radiuses)
     message['size'] = size
@@ -488,7 +489,7 @@ def create_model(ncircle, size, gap, num_add, max_iter, dt0, dt_interval, raylei
     with open(filename, 'w', encoding='utf-8') as f:
         json.dump(message, f, ensure_ascii=False)
     status['log'] += 'Save %s\n' % filename
-    
+
     filename = os.path.join(model_path, 'args.json')
     status['log'] += 'Save %s\n' % filename
     with open(filename, 'w', encoding='utf-8') as f:
@@ -498,7 +499,7 @@ def create_model(ncircle, size, gap, num_add, max_iter, dt0, dt_interval, raylei
     status['log'] += 'Save %s\n' % filename
     with open(filename, 'w', encoding='utf-8') as f:
         f.write(status['log'])
-        
+
     return 0
 
 
@@ -518,7 +519,9 @@ if __name__ == "__main__":
     model_path = ''
     thread_id = 1
     status = {'status': 'Submit', 'log': '', 'progress': 0}
-    args = (ncircle, size, gap, num_add, max_iter, dt0, dt_interval, rayleigh_para, num_ball, rad_min, rad_max, model_path, status)
+    args = (
+    ncircle, size, gap, num_add, max_iter, dt0, dt_interval, rayleigh_para, num_ball, rad_min, rad_max, model_path,
+    status)
     print(status)
     create_model(*args)
     print(status)

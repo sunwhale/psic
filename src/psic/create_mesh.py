@@ -2,10 +2,10 @@
 """
 生成四边形/六面体网格
 """
+import json
+import os
 
 import numpy as np
-import os
-import json
 
 
 def node_number(i, j, k, l, m, n):
@@ -33,7 +33,7 @@ def node_number(i, j, k, l, m, n):
         节点编号
 
     '''
-    return k*l*m + j*l + i
+    return k * l * m + j * l + i
 
 
 def element_node_C3D8(i, j, k, l, m, n):
@@ -76,13 +76,13 @@ def element_node_C3D8(i, j, k, l, m, n):
 
     '''
     n1 = node_number(i, j, k, l, m, n)
-    n2 = node_number(i+1, j, k, l, m, n)
-    n3 = node_number(i+1, j+1, k, l, m, n)
-    n4 = node_number(i, j+1, k, l, m, n)
-    n5 = node_number(i, j, k+1, l, m, n)
-    n6 = node_number(i+1, j, k+1, l, m, n)
-    n7 = node_number(i+1, j+1, k+1, l, m, n)
-    n8 = node_number(i, j+1, k+1, l, m, n)
+    n2 = node_number(i + 1, j, k, l, m, n)
+    n3 = node_number(i + 1, j + 1, k, l, m, n)
+    n4 = node_number(i, j + 1, k, l, m, n)
+    n5 = node_number(i, j, k + 1, l, m, n)
+    n6 = node_number(i + 1, j, k + 1, l, m, n)
+    n7 = node_number(i + 1, j + 1, k + 1, l, m, n)
+    n8 = node_number(i, j + 1, k + 1, l, m, n)
     return n1, n2, n3, n4, n5, n6, n7, n8
 
 
@@ -116,9 +116,9 @@ def element_node_CPE4(i, j, l, m):
     k = 0
     n = 0
     n1 = node_number(i, j, k, l, m, n)
-    n2 = node_number(i+1, j, k, l, m, n)
-    n3 = node_number(i+1, j+1, k, l, m, n)
-    n4 = node_number(i, j+1, k, l, m, n)
+    n2 = node_number(i + 1, j, k, l, m, n)
+    n3 = node_number(i + 1, j + 1, k, l, m, n)
+    n4 = node_number(i, j + 1, k, l, m, n)
     return n1, n2, n3, n4
 
 
@@ -140,19 +140,19 @@ def element_centroid(node_shape, dimension):
 
     '''
     if len(node_shape) == 2:
-        x = np.linspace(dimension[0]/(node_shape[0]-1)/2, dimension[0] -
-                        dimension[0]/(node_shape[0]-1)/2, node_shape[0]-1)
-        y = np.linspace(dimension[1]/(node_shape[1]-1)/2, dimension[1] -
-                        dimension[1]/(node_shape[1]-1)/2, node_shape[1]-1)
+        x = np.linspace(dimension[0] / (node_shape[0] - 1) / 2, dimension[0] -
+                        dimension[0] / (node_shape[0] - 1) / 2, node_shape[0] - 1)
+        y = np.linspace(dimension[1] / (node_shape[1] - 1) / 2, dimension[1] -
+                        dimension[1] / (node_shape[1] - 1) / 2, node_shape[1] - 1)
         x, y = np.meshgrid(x, y)
         return x, y
     if len(node_shape) == 3:
-        x = np.linspace(dimension[0]/(node_shape[0]-1)/2, dimension[0] -
-                        dimension[0]/(node_shape[0]-1)/2, node_shape[0]-1)
-        y = np.linspace(dimension[1]/(node_shape[1]-1)/2, dimension[1] -
-                        dimension[1]/(node_shape[1]-1)/2, node_shape[1]-1)
-        z = np.linspace(dimension[2]/(node_shape[2]-1)/2, dimension[2] -
-                        dimension[2]/(node_shape[2]-1)/2, node_shape[2]-1)
+        x = np.linspace(dimension[0] / (node_shape[0] - 1) / 2, dimension[0] -
+                        dimension[0] / (node_shape[0] - 1) / 2, node_shape[0] - 1)
+        y = np.linspace(dimension[1] / (node_shape[1] - 1) / 2, dimension[1] -
+                        dimension[1] / (node_shape[1] - 1) / 2, node_shape[1] - 1)
+        z = np.linspace(dimension[2] / (node_shape[2] - 1) / 2, dimension[2] -
+                        dimension[2] / (node_shape[2] - 1) / 2, node_shape[2] - 1)
         x, y, z = np.meshgrid(x, y, z)
         return x, y, z
     return 0
@@ -224,10 +224,10 @@ def create_element_index(node_shape):
         与单元位置对应的索引编号数组
 
     '''
-    element_shape = [n-1 for n in node_shape]
+    element_shape = [n - 1 for n in node_shape]
     element_size = 1
     for n in node_shape:
-        element_size *= (n-1)
+        element_size *= (n - 1)
     return np.arange(element_size).reshape(element_shape)
 
 
@@ -273,7 +273,7 @@ def create_ijk(node_shape):
         每个坐标方向上的单元编号
 
     '''
-    element_shape = [n-1 for n in node_shape]
+    element_shape = [n - 1 for n in node_shape]
     ijk = [np.arange(n) for n in element_shape]
     if len(node_shape) == 2:
         i, j = np.meshgrid(ijk[0], ijk[1])
@@ -293,21 +293,21 @@ def write_input_file(dim, nodes, elements, element_type, element_sets_dict, outp
 
     if dim == 2:
         for num, x, y in np.nditer(nodes):
-            outfile.write('%s, %s, %s, %s\n' % (num+1, x, y, 0))
+            outfile.write('%s, %s, %s, %s\n' % (num + 1, x, y, 0))
 
         outfile.write('*Element, type=%s\n' % element_type)
         for num, n1, n2, n3, n4 in np.nditer(elements):
             outfile.write('%s, %s, %s, %s, %s\n' %
-                          (num+1, n1+1, n2+1, n3+1, n4+1))
+                          (num + 1, n1 + 1, n2 + 1, n3 + 1, n4 + 1))
 
     elif dim >= 3:
         for num, x, y, z in np.nditer(nodes):
-            outfile.write('%s, %s, %s, %s,%s\n' % (num+1, x, y, z, 0))
+            outfile.write('%s, %s, %s, %s,%s\n' % (num + 1, x, y, z, 0))
 
         outfile.write('*Element, type=%s\n' % element_type)
         for num, n1, n2, n3, n4, n5, n6, n7, n8 in np.nditer(elements):
             outfile.write('%s, %s, %s, %s, %s, %s, %s, %s, %s\n' % (
-                num+1, n1+1, n2+1, n3+1, n4+1, n5+1, n6+1, n7+1, n8+1))
+                num + 1, n1 + 1, n2 + 1, n3 + 1, n4 + 1, n5 + 1, n6 + 1, n7 + 1, n8 + 1))
 
     for key in element_sets_dict.keys():
         outfile.write('*Elset, elset=ELSET_%s\n' % key)
@@ -332,7 +332,7 @@ def write_input_file(dim, nodes, elements, element_type, element_sets_dict, outp
             end = '\n'
         else:
             end = ','
-        outfile.write(str(node+1) + end)
+        outfile.write(str(node + 1) + end)
 
     if dim == 2:
         x0 = min(nodes[1])
@@ -375,7 +375,7 @@ def write_input_file(dim, nodes, elements, element_type, element_sets_dict, outp
             'X1Y1Z0': nodes[0][(nodes[1] == x1) & (nodes[2] == y1) & (nodes[3] == z0)],
             'X1Y1Z1': nodes[0][(nodes[1] == x1) & (nodes[2] == y1) & (nodes[3] == z1)]
         }
-        
+
     for key in node_sets_dict.keys():
         outfile.write('*Nset, nset=%s\n' % key)
         count = 0
@@ -387,7 +387,7 @@ def write_input_file(dim, nodes, elements, element_type, element_sets_dict, outp
                 end = '\n'
             else:
                 end = ','
-            outfile.write(str(node+1) + end)
+            outfile.write(str(node + 1) + end)
 
     outfile.close()
 
@@ -395,7 +395,7 @@ def write_input_file(dim, nodes, elements, element_type, element_sets_dict, outp
 def mesh(gap, dimension, node_shape, element_type, model_path, output_path, status, is_interface=True):
     model_file = os.path.join(model_path, 'model.npy')
     circles = np.load(model_file)
-    dim = circles.shape[-1]-1
+    dim = circles.shape[-1] - 1
     if dim == 2:
         node_index = create_node_index(node_shape)
         element_index = create_element_index(node_shape)
@@ -422,7 +422,7 @@ def mesh(gap, dimension, node_shape, element_type, model_path, output_path, stat
         elements = [element_index, n1, n2, n3, n4]
 
         element_sets = np.zeros(len(element_index))
-            
+
         n1x = x[n1]
         n1y = y[n1]
         n2x = x[n2]
@@ -431,23 +431,23 @@ def mesh(gap, dimension, node_shape, element_type, model_path, output_path, stat
         n3y = y[n3]
         n4x = x[n4]
         n4y = y[n4]
-        
+
         if not is_interface:
             for i, circle in enumerate(circles):
                 cx = circle[0]
                 cy = circle[1]
                 r = circle[2] - gap
-                index = (ecx - cx)**2 + (ecy - cy)**2 < r**2
+                index = (ecx - cx) ** 2 + (ecy - cy) ** 2 < r ** 2
                 element_sets[index] = int(i) + 1
         else:
             for i, circle in enumerate(circles):
                 cx = circle[0]
                 cy = circle[1]
                 r = circle[2] - gap
-                index1 = (n1x-cx)**2 + (n1y-cy)**2 < r**2
-                index2 = (n2x-cx)**2 + (n2y-cy)**2 < r**2
-                index3 = (n3x-cx)**2 + (n3y-cy)**2 < r**2
-                index4 = (n4x-cx)**2 + (n4y-cy)**2 < r**2
+                index1 = (n1x - cx) ** 2 + (n1y - cy) ** 2 < r ** 2
+                index2 = (n2x - cx) ** 2 + (n2y - cy) ** 2 < r ** 2
+                index3 = (n3x - cx) ** 2 + (n3y - cy) ** 2 < r ** 2
+                index4 = (n4x - cx) ** 2 + (n4y - cy) ** 2 < r ** 2
                 index_inner = index1 & index2 & index3 & index4
                 element_sets[index_inner] = int(i) + 1
                 index_inter = (index1 | index2 | index3 | index4) ^ index_inner
@@ -508,14 +508,14 @@ def mesh(gap, dimension, node_shape, element_type, model_path, output_path, stat
         n8x = x[n8]
         n8y = y[n8]
         n8z = z[n8]
-        
+
         if not is_interface:
             for i, circle in enumerate(circles):
                 cx = circle[0]
                 cy = circle[1]
                 cz = circle[2]
                 r = circle[-1] - gap
-                index = (ecx - cx)**2 + (ecy - cy)**2 + (ecz-cz)**2 < r**2
+                index = (ecx - cx) ** 2 + (ecy - cy) ** 2 + (ecz - cz) ** 2 < r ** 2
                 element_sets[index] = int(i) + 1
         else:
             for i, circle in enumerate(circles):
@@ -523,19 +523,19 @@ def mesh(gap, dimension, node_shape, element_type, model_path, output_path, stat
                 cy = circle[1]
                 cz = circle[2]
                 r = circle[-1] - gap
-                index1 = (n1x-cx)**2 + (n1y-cy)**2 + (n1z-cz)**2 < r**2
-                index2 = (n2x-cx)**2 + (n2y-cy)**2 + (n2z-cz)**2 < r**2
-                index3 = (n3x-cx)**2 + (n3y-cy)**2 + (n3z-cz)**2 < r**2
-                index4 = (n4x-cx)**2 + (n4y-cy)**2 + (n4z-cz)**2 < r**2
-                index5 = (n5x-cx)**2 + (n5y-cy)**2 + (n5z-cz)**2 < r**2
-                index6 = (n6x-cx)**2 + (n6y-cy)**2 + (n6z-cz)**2 < r**2
-                index7 = (n7x-cx)**2 + (n7y-cy)**2 + (n7z-cz)**2 < r**2
-                index8 = (n8x-cx)**2 + (n8y-cy)**2 + (n8z-cz)**2 < r**2
+                index1 = (n1x - cx) ** 2 + (n1y - cy) ** 2 + (n1z - cz) ** 2 < r ** 2
+                index2 = (n2x - cx) ** 2 + (n2y - cy) ** 2 + (n2z - cz) ** 2 < r ** 2
+                index3 = (n3x - cx) ** 2 + (n3y - cy) ** 2 + (n3z - cz) ** 2 < r ** 2
+                index4 = (n4x - cx) ** 2 + (n4y - cy) ** 2 + (n4z - cz) ** 2 < r ** 2
+                index5 = (n5x - cx) ** 2 + (n5y - cy) ** 2 + (n5z - cz) ** 2 < r ** 2
+                index6 = (n6x - cx) ** 2 + (n6y - cy) ** 2 + (n6z - cz) ** 2 < r ** 2
+                index7 = (n7x - cx) ** 2 + (n7y - cy) ** 2 + (n7z - cz) ** 2 < r ** 2
+                index8 = (n8x - cx) ** 2 + (n8y - cy) ** 2 + (n8z - cz) ** 2 < r ** 2
                 index_inner = index1 & index2 & index3 & index4 & index5 & index6 & index7 & index8
                 element_sets[index_inner] = int(i) + 1
                 index_inter = (index1 | index2 | index3 | index4 | index5 | index6 | index7 | index8) ^ index_inner
                 element_sets[index_inter] = -1
-                
+
     element_sets_names = np.unique(element_sets)
 
     element_sets_dict = {}
@@ -546,15 +546,15 @@ def mesh(gap, dimension, node_shape, element_type, model_path, output_path, stat
         element_sets_dict['INTERFACES'] = []
         element_sets_dict['ALL'] = []
     for i, _ in enumerate(element_sets):
-        element_sets_dict[int(element_sets[i])].append(element_index[i]+1)
+        element_sets_dict[int(element_sets[i])].append(element_index[i] + 1)
         if int(element_sets[i]) == 0:
-            element_sets_dict['MATRIX'].append(element_index[i]+1)
+            element_sets_dict['MATRIX'].append(element_index[i] + 1)
         elif int(element_sets[i]) == -1:
-            element_sets_dict['INTERFACES'].append(element_index[i]+1)
+            element_sets_dict['INTERFACES'].append(element_index[i] + 1)
         else:
-            element_sets_dict['PARTICLES'].append(element_index[i]+1)
-        element_sets_dict['ALL'].append(element_index[i]+1)
-        
+            element_sets_dict['PARTICLES'].append(element_index[i] + 1)
+        element_sets_dict['ALL'].append(element_index[i] + 1)
+
     write_input_file(dim, nodes, elements, element_type, element_sets_dict, output_path)
 
     status['message']['element_sets_names'] = element_sets_names.tolist()
@@ -563,7 +563,6 @@ def mesh(gap, dimension, node_shape, element_type, model_path, output_path, stat
 
 
 def create_mesh(gap, size, dimension, node_shape, element_type, model_path, output_path, status):
-
     args = gap, size, dimension, node_shape, element_type, model_path, output_path, status
 
     status['message'] = {}
@@ -579,7 +578,7 @@ def create_mesh(gap, size, dimension, node_shape, element_type, model_path, outp
     status['message']['gap'] = gap
     with open(filename, 'w', encoding='utf-8') as f:
         json.dump(status['message'], f, ensure_ascii=False)
-        
+
     filename = os.path.join(output_path, 'args.json')
     with open(filename, 'w', encoding='utf-8') as f:
         json.dump(args[:-1], f, ensure_ascii=False)
