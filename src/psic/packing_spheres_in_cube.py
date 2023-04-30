@@ -11,12 +11,8 @@ import os
 import numpy as np
 from scipy.spatial.distance import cdist
 
-try:
-    from calc_fraction import calc_area_fraction, calc_volume_fraction
-    from plot_model import plot_circle, plot_distribution, plot_sphere
-except ImportError:
-    from psic.calc_fraction import calc_area_fraction, calc_volume_fraction
-    from psic.plot_model import plot_circle, plot_distribution, plot_sphere
+from psic.calc_fraction import calc_area_fraction, calc_volume_fraction
+from psic.plot_model import plot_circle, plot_distribution, plot_sphere
 
 
 def rayleigh_set(scale, size):
