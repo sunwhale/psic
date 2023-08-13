@@ -4,12 +4,14 @@
 """
 import json
 import os
+from typing import Union
 
 import numpy as np
-from numpy import ndarray
+from numpy import ndarray, zeros, array
 
 
-def node_number(i: int | ndarray, j: int | ndarray, k: int | ndarray, l: int | ndarray, m: int | ndarray, n: int | ndarray) -> ndarray:
+def node_number(i: Union[int, ndarray], j: Union[int, ndarray], k: Union[int, ndarray], l: Union[int, ndarray],
+                m: Union[int, ndarray], n: Union[int, ndarray]) -> ndarray:
     """
     生成i，j，k对应的节点号
 
@@ -36,7 +38,8 @@ def node_number(i: int | ndarray, j: int | ndarray, k: int | ndarray, l: int | n
     return k * l * m + j * l + i  # type: ignore
 
 
-def element_node_C3D8(i: ndarray, j: ndarray, k: ndarray, l: ndarray, m: ndarray, n: ndarray) -> tuple[ndarray, ndarray, ndarray, ndarray, ndarray, ndarray, ndarray, ndarray]:
+def element_node_C3D8(i: ndarray, j: ndarray, k: ndarray, l: ndarray, m: ndarray, n: ndarray) -> tuple[
+    ndarray, ndarray, ndarray, ndarray, ndarray, ndarray, ndarray, ndarray]:
     """
     生成i，j，k对应的三维单元的节点号
 
@@ -120,8 +123,7 @@ def element_node_CPE4(i: ndarray, j: ndarray, l: ndarray, m: ndarray) -> tuple[n
     return n1, n2, n3, n4
 
 
-def create_elements_centroids(node_shape: list, dimension: list) -> tuple[ndarray, ndarray] | tuple[
-    ndarray, ndarray, ndarray]:
+def create_elements_centroids(node_shape: list, dimension: list) -> tuple[ndarray, ndarray, ndarray]:
     """
     生成全体单元中心点的坐标数组
 
@@ -143,7 +145,7 @@ def create_elements_centroids(node_shape: list, dimension: list) -> tuple[ndarra
         y = np.linspace(dimension[1] / (node_shape[1] - 1) / 2, dimension[1] -
                         dimension[1] / (node_shape[1] - 1) / 2, node_shape[1] - 1)
         x, y = np.meshgrid(x, y)
-        return x, y
+        return x, y, zeros(0)
     elif len(node_shape) == 3:
         x = np.linspace(dimension[0] / (node_shape[0] - 1) / 2, dimension[0] -
                         dimension[0] / (node_shape[0] - 1) / 2, node_shape[0] - 1)
@@ -157,8 +159,7 @@ def create_elements_centroids(node_shape: list, dimension: list) -> tuple[ndarra
         raise NotImplementedError(f'the geometry dimension {len(node_shape)} is not supported')
 
 
-def create_nodes_coordinates(node_shape: list, dimension: list) -> tuple[ndarray, ndarray] | tuple[
-    ndarray, ndarray, ndarray]:
+def create_nodes_coordinates(node_shape: list, dimension: list) -> tuple[ndarray, ndarray, ndarray]:
     """
     生成全体节点坐标数组
 
@@ -178,7 +179,7 @@ def create_nodes_coordinates(node_shape: list, dimension: list) -> tuple[ndarray
         x = np.linspace(0, dimension[0], node_shape[0])
         y = np.linspace(0, dimension[1], node_shape[1])
         x, y = np.meshgrid(x, y)
-        return x, y
+        return x, y, zeros(0)
     elif len(node_shape) == 3:
         x = np.linspace(0, dimension[0], node_shape[0])
         y = np.linspace(0, dimension[1], node_shape[1])
@@ -230,7 +231,7 @@ def create_elements_indices(node_shape: list) -> ndarray:
     return np.arange(element_size).reshape(element_shape)
 
 
-def create_lmn(node_shape: list) -> tuple[ndarray, ndarray] | tuple[ndarray, ndarray, ndarray]:
+def create_lmn(node_shape: list) -> tuple[ndarray, ndarray, ndarray]:
     """
     生成l, m, n
 
@@ -247,7 +248,7 @@ def create_lmn(node_shape: list) -> tuple[ndarray, ndarray] | tuple[ndarray, nda
     if len(node_shape) == 2:
         m = node_shape[0]
         l = node_shape[1]
-        return l, m
+        return l, m, zeros(0)
     elif len(node_shape) == 3:
         m = node_shape[0]
         l = node_shape[1]
@@ -258,7 +259,7 @@ def create_lmn(node_shape: list) -> tuple[ndarray, ndarray] | tuple[ndarray, nda
         # return 0
 
 
-def create_ijk(node_shape: list) -> tuple[ndarray, ndarray] | tuple[ndarray, ndarray, ndarray]:
+def create_ijk(node_shape: list) -> tuple[ndarray, ndarray, ndarray]:
     """
     生成i, j, k
 
@@ -276,7 +277,7 @@ def create_ijk(node_shape: list) -> tuple[ndarray, ndarray] | tuple[ndarray, nda
     ijk = [np.arange(n) for n in element_shape]
     if len(node_shape) == 2:
         i, j = np.meshgrid(ijk[0], ijk[1])
-        return i, j
+        return i, j, zeros(0)
     elif len(node_shape) == 3:
         j, k, i = np.meshgrid(ijk[0], ijk[1], ijk[2])
         return i, j, k
@@ -285,8 +286,8 @@ def create_ijk(node_shape: list) -> tuple[ndarray, ndarray] | tuple[ndarray, nda
         # return 0
 
 
-def write_input_file(dim: int, nodes: list[ndarray], elements: list[ndarray], element_type: str, element_sets_dict: dict,
-                     output_path: str) -> None:
+def write_input_file(dim: int, nodes: list[ndarray], elements: list[ndarray], element_type: str,
+                     element_sets_dict: dict, output_path: str) -> None:
     filename = os.path.join(output_path, 'Model-1.inp')
     outfile = open(filename, 'w')
 
@@ -400,17 +401,17 @@ def write_input_file(dim: int, nodes: list[ndarray], elements: list[ndarray], el
 def mesh(gap: float, dimension: list, node_shape: list, element_type: str, model_path: str, output_path: str,
          status: dict, is_interface: bool = True) -> None:
     model_file = os.path.join(model_path, 'model.npy')
-    circles = np.load(model_file)
+    circles = array(np.load(model_file))
     dim = circles.shape[-1] - 1
     if dim == 2:
         node_index = create_nodes_indices(node_shape)
         element_index = create_elements_indices(node_shape)
 
-        x, y = create_nodes_coordinates(node_shape, dimension)  # type: ignore
-        ecx, ecy = create_elements_centroids(node_shape, dimension)  # type: ignore
+        x, y, _ = create_nodes_coordinates(node_shape, dimension)
+        ecx, ecy, _ = create_elements_centroids(node_shape, dimension)
 
-        l, m = create_lmn(node_shape)  # type: ignore
-        i, j = create_ijk(node_shape)  # type: ignore
+        l, m, _ = create_lmn(node_shape)
+        i, j, _ = create_ijk(node_shape)
         n1, n2, n3, n4 = element_node_CPE4(i, j, l, m)
 
         node_index = node_index.flatten()
@@ -439,14 +440,14 @@ def mesh(gap: float, dimension: list, node_shape: list, element_type: str, model
         n4y = y[n4]
 
         if not is_interface:
-            for i, circle in enumerate(circles):
+            for id_, circle in enumerate(circles):
                 cx = circle[0]
                 cy = circle[1]
                 r = circle[2] - gap
                 index = (ecx - cx) ** 2 + (ecy - cy) ** 2 < r ** 2
-                element_sets[index] = int(i) + 1
+                element_sets[index] = int(id_) + 1
         else:
-            for i, circle in enumerate(circles):
+            for id_, circle in enumerate(circles):
                 cx = circle[0]
                 cy = circle[1]
                 r = circle[2] - gap
@@ -455,7 +456,7 @@ def mesh(gap: float, dimension: list, node_shape: list, element_type: str, model
                 index3 = (n3x - cx) ** 2 + (n3y - cy) ** 2 < r ** 2
                 index4 = (n4x - cx) ** 2 + (n4y - cy) ** 2 < r ** 2
                 index_inner = index1 & index2 & index3 & index4
-                element_sets[index_inner] = int(i) + 1
+                element_sets[index_inner] = int(id_) + 1
                 index_inter = (index1 | index2 | index3 | index4) ^ index_inner
                 element_sets[index_inter] = -1
 
@@ -463,11 +464,11 @@ def mesh(gap: float, dimension: list, node_shape: list, element_type: str, model
         node_index = create_nodes_indices(node_shape)
         element_index = create_elements_indices(node_shape)
 
-        x, y, z = create_nodes_coordinates(node_shape, dimension)  # type: ignore
-        ecx, ecy, ecz = create_elements_centroids(node_shape, dimension)  # type: ignore
+        x, y, z = create_nodes_coordinates(node_shape, dimension)
+        ecx, ecy, ecz = create_elements_centroids(node_shape, dimension)
 
-        l, m, n = create_lmn(node_shape)  # type: ignore
-        i, j, k = create_ijk(node_shape)  # type: ignore
+        l, m, n = create_lmn(node_shape)
+        i, j, k = create_ijk(node_shape)
         n1, n2, n3, n4, n5, n6, n7, n8 = element_node_C3D8(i, j, k, l, m, n)
 
         node_index = node_index.flatten()
@@ -517,15 +518,15 @@ def mesh(gap: float, dimension: list, node_shape: list, element_type: str, model
         n8z = z[n8]
 
         if not is_interface:
-            for i, circle in enumerate(circles):
+            for id_, circle in enumerate(circles):
                 cx = circle[0]
                 cy = circle[1]
                 cz = circle[2]
                 r = circle[-1] - gap
                 index = (ecx - cx) ** 2 + (ecy - cy) ** 2 + (ecz - cz) ** 2 < r ** 2
-                element_sets[index] = int(i) + 1
+                element_sets[index] = int(id_) + 1
         else:
-            for i, circle in enumerate(circles):
+            for id_, circle in enumerate(circles):
                 cx = circle[0]
                 cy = circle[1]
                 cz = circle[2]
@@ -539,7 +540,7 @@ def mesh(gap: float, dimension: list, node_shape: list, element_type: str, model
                 index7 = (n7x - cx) ** 2 + (n7y - cy) ** 2 + (n7z - cz) ** 2 < r ** 2
                 index8 = (n8x - cx) ** 2 + (n8y - cy) ** 2 + (n8z - cz) ** 2 < r ** 2
                 index_inner = index1 & index2 & index3 & index4 & index5 & index6 & index7 & index8
-                element_sets[index_inner] = int(i) + 1
+                element_sets[index_inner] = int(id_) + 1
                 index_inter = (index1 | index2 | index3 | index4 | index5 | index6 | index7 | index8) ^ index_inner
                 element_sets[index_inter] = -1
 
@@ -555,15 +556,15 @@ def mesh(gap: float, dimension: list, node_shape: list, element_type: str, model
         element_sets_dict['PARTICLES'] = []
         element_sets_dict['INTERFACES'] = []
         element_sets_dict['ALL'] = []
-    for i, _ in enumerate(element_sets):
-        element_sets_dict[int(element_sets[i])].append(element_index[i] + 1)
-        if int(element_sets[i]) == 0:
-            element_sets_dict['MATRIX'].append(element_index[i] + 1)
-        elif int(element_sets[i]) == -1:
-            element_sets_dict['INTERFACES'].append(element_index[i] + 1)
+    for id_, _ in enumerate(element_sets):
+        element_sets_dict[int(element_sets[id_])].append(element_index[id_] + 1)
+        if int(element_sets[id_]) == 0:
+            element_sets_dict['MATRIX'].append(element_index[id_] + 1)
+        elif int(element_sets[id_]) == -1:
+            element_sets_dict['INTERFACES'].append(element_index[id_] + 1)
         else:
-            element_sets_dict['PARTICLES'].append(element_index[i] + 1)
-        element_sets_dict['ALL'].append(element_index[i] + 1)
+            element_sets_dict['PARTICLES'].append(element_index[id_] + 1)
+        element_sets_dict['ALL'].append(element_index[id_] + 1)
 
     write_input_file(dim, nodes, elements, element_type, element_sets_dict, output_path)
 
@@ -572,7 +573,8 @@ def mesh(gap: float, dimension: list, node_shape: list, element_type: str, model
     status['message']['elements_number'] = len(element_index)
 
 
-def create_mesh(gap: float, size: list, dimension: list, node_shape: list, element_type: str, model_path: str, output_path: str, status: dict) -> int:
+def create_mesh(gap: float, size: list, dimension: list, node_shape: list, element_type: str, model_path: str,
+                output_path: str, status: dict) -> int:
     args = gap, size, dimension, node_shape, element_type, model_path, output_path, status
 
     status['message'] = {}

@@ -32,7 +32,8 @@ def plot_circle(centers: ndarray, radiuses: ndarray, size: list, filename: str, 
     plt.close(fig)
 
 
-def plot_sphere(centers: ndarray, radiuses: ndarray, size: list, filename: str, dpi: tuple[int, int] = (500, 500)) -> None:
+def plot_sphere(centers: ndarray, radiuses: ndarray, size: list, filename: str,
+                dpi: tuple[int, int] = (500, 500)) -> None:
     x, y, z, r = centers[:, 0], centers[:, 1], centers[:, 2], radiuses[:, 0]
     if has_mayavi:
         mlab.options.offscreen = True
