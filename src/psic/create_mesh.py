@@ -6,75 +6,74 @@ import json
 import os
 
 import numpy as np
+from numpy import ndarray
 
 
-def node_number(i, j, k, l, m, n):
-    '''
+def node_number(i: int | ndarray, j: int | ndarray, k: int | ndarray, l: int | ndarray, m: int | ndarray, n: int | ndarray) -> ndarray:
+    """
     生成i，j，k对应的节点号
 
     Parameters
     ----------
-    i : int
+    i : int | ndarray
         单元对应的1方向编号
-    j : int
+    j : int | ndarray
         单元对应的2方向编号
-    k : int
+    k : int | ndarray
         单元对应的3方向编号
-    l : int
+    l : int | ndarray
         1方向的节点数
-    m : int
+    m : int | ndarray
         2方向的节点数
-    n : int
+    n : int | ndarray
         3方向的节点数
 
     Returns
     -------
-    int
+    ndarray
         节点编号
+    """
+    return k * l * m + j * l + i  # type: ignore
 
-    '''
-    return k * l * m + j * l + i
 
-
-def element_node_C3D8(i, j, k, l, m, n):
-    '''
+def element_node_C3D8(i: ndarray, j: ndarray, k: ndarray, l: ndarray, m: ndarray, n: ndarray) -> tuple[ndarray, ndarray, ndarray, ndarray, ndarray, ndarray, ndarray, ndarray]:
+    """
     生成i，j，k对应的三维单元的节点号
 
     Parameters
     ----------
-    i : int
+    i : ndarray
         单元对应的1方向编号
-    j : int
+    j : ndarray
         单元对应的2方向编号
-    k : int
+    k : ndarray
         单元对应的3方向编号
-    l : int
+    l : ndarray
         1方向的节点数
-    m : int
+    m : ndarray
         2方向的节点数
-    n : int
+    n : ndarray
         3方向的节点数
 
     Returns
     -------
-    n1 : int
-        单元的1节点对应的总节点编号
-    n2 : int
-        单元的2节点对应的总节点编号
-    n3 : int
-        单元的3节点对应的总节点编号
-    n4 : int
-        单元的4节点对应的总节点编号
-    n5 : int
-        单元的5节点对应的总节点编号
-    n6 : int
-        单元的6节点对应的总节点编号
-    n7 : int
-        单元的7节点对应的总节点编号
-    n8 : int
-        单元的8节点对应的总节点编号
-
-    '''
+    n1 : ndarray
+        单元的1号节点对应的总节点编号
+    n2 : ndarray
+        单元的2号节点对应的总节点编号
+    n3 : ndarray
+        单元的3号节点对应的总节点编号
+    n4 : ndarray
+        单元的4号节点对应的总节点编号
+    n5 : ndarray
+        单元的5号节点对应的总节点编号
+    n6 : ndarray
+        单元的6号节点对应的总节点编号
+    n7 : ndarray
+        单元的7号节点对应的总节点编号
+    n8 : ndarray
+        单元的8号节点对应的总节点编号
+    """
     n1 = node_number(i, j, k, l, m, n)
     n2 = node_number(i + 1, j, k, l, m, n)
     n3 = node_number(i + 1, j + 1, k, l, m, n)
@@ -86,33 +85,32 @@ def element_node_C3D8(i, j, k, l, m, n):
     return n1, n2, n3, n4, n5, n6, n7, n8
 
 
-def element_node_CPE4(i, j, l, m):
-    '''
+def element_node_CPE4(i: ndarray, j: ndarray, l: ndarray, m: ndarray) -> tuple[ndarray, ndarray, ndarray, ndarray]:
+    """
     生成i，j对应的二维单元的节点号
 
     Parameters
     ----------
-    i : int
+    i : ndarray
         单元对应的1方向编号
-    j : int
+    j : ndarray
         单元对应的2方向编号
-    l : int
+    l : ndarray
         1方向的节点数
-    m : int
+    m : ndarray
         2方向的节点数
 
     Returns
     -------
-    n1 : array
-        单元的1节点对应的总节点编号
-    n2 : array
-        单元的2节点对应的总节点编号
-    n3 : array
-        单元的3节点对应的总节点编号
-    n4 : array
-        单元的4节点对应的总节点编号
-
-    '''
+    n1 : ndarray
+        单元的1号节点对应的总节点编号
+    n2 : ndarray
+        单元的2号节点对应的总节点编号
+    n3 : ndarray
+        单元的3号节点对应的总节点编号
+    n4 : ndarray
+        单元的4号节点对应的总节点编号
+    """
     k = 0
     n = 0
     n1 = node_number(i, j, k, l, m, n)
@@ -122,23 +120,23 @@ def element_node_CPE4(i, j, l, m):
     return n1, n2, n3, n4
 
 
-def element_centroid(node_shape, dimension):
-    '''
-    生成单元中心点的坐标数组
+def create_elements_centroids(node_shape: list, dimension: list) -> tuple[ndarray, ndarray] | tuple[
+    ndarray, ndarray, ndarray]:
+    """
+    生成全体单元中心点的坐标数组
 
     Parameters
     ----------
     node_shape : list
-        节点矩阵维度参数
+        节点在每个坐标轴方向的数量列表，例如[65, 65]代表x和y方向分别设置65个等分点
     dimension : list
-        RVE的尺寸大小
+        相对于原点，RVE的尺寸大小
 
     Returns
     -------
-    array
-        单元中心点在不同方向上的坐标数组
-
-    '''
+    x, y, z
+        全体单元中心点在不同方向上的坐标数组
+    """
     if len(node_shape) == 2:
         x = np.linspace(dimension[0] / (node_shape[0] - 1) / 2, dimension[0] -
                         dimension[0] / (node_shape[0] - 1) / 2, node_shape[0] - 1)
@@ -146,7 +144,7 @@ def element_centroid(node_shape, dimension):
                         dimension[1] / (node_shape[1] - 1) / 2, node_shape[1] - 1)
         x, y = np.meshgrid(x, y)
         return x, y
-    if len(node_shape) == 3:
+    elif len(node_shape) == 3:
         x = np.linspace(dimension[0] / (node_shape[0] - 1) / 2, dimension[0] -
                         dimension[0] / (node_shape[0] - 1) / 2, node_shape[0] - 1)
         y = np.linspace(dimension[1] / (node_shape[1] - 1) / 2, dimension[1] -
@@ -155,75 +153,76 @@ def element_centroid(node_shape, dimension):
                         dimension[2] / (node_shape[2] - 1) / 2, node_shape[2] - 1)
         x, y, z = np.meshgrid(x, y, z)
         return x, y, z
-    return 0
+    else:
+        raise NotImplementedError(f'the geometry dimension {len(node_shape)} is not supported')
 
 
-def create_node_coordinate(node_shape, dimension):
-    '''
-    生成节点坐标数组
+def create_nodes_coordinates(node_shape: list, dimension: list) -> tuple[ndarray, ndarray] | tuple[
+    ndarray, ndarray, ndarray]:
+    """
+    生成全体节点坐标数组
 
     Parameters
     ----------
     node_shape : list
-        节点矩阵维度参数
+        节点在每个坐标轴方向的数量列表，例如[65, 65]代表x和y方向分别设置65个等分点
     dimension : list
-        RVE的尺寸大小
+        相对于原点，RVE的尺寸大小
 
     Returns
     -------
-    array
-        节点在不同方向上的坐标数组
-
-    '''
+    x, y, z
+        全体节点在不同方向上的坐标数组
+    """
     if len(node_shape) == 2:
         x = np.linspace(0, dimension[0], node_shape[0])
         y = np.linspace(0, dimension[1], node_shape[1])
         x, y = np.meshgrid(x, y)
         return x, y
-    if len(node_shape) == 3:
+    elif len(node_shape) == 3:
         x = np.linspace(0, dimension[0], node_shape[0])
         y = np.linspace(0, dimension[1], node_shape[1])
         z = np.linspace(0, dimension[2], node_shape[2])
         y, z, x = np.meshgrid(x, y, z)
         return x, y, z
+    else:
+        raise NotImplementedError(f'the geometry dimension {len(node_shape)} is not supported')
 
 
-def create_node_index(node_shape):
-    '''
-    生成节点索引编号
+def create_nodes_indices(node_shape: list) -> ndarray:
+    """
+    生成全体节点索引编号
 
     Parameters
     ----------
     node_shape : list
-        节点形状
+        节点在每个坐标轴方向的数量列表，例如[65, 65]代表x和y方向分别设置65个等分点
 
     Returns
     -------
-    array
-        与节点位置对应的索引编号数组
-
-    '''
+    ndarray
+        与节点位置对应的索引编号数组，[i, j, k]->节点全局索引编号
+    """
     node_size = 1
     for n in node_shape:
         node_size *= n
     return np.arange(node_size).reshape(node_shape)
 
 
-def create_element_index(node_shape):
-    '''
-    生成单元索引编号
+def create_elements_indices(node_shape: list) -> ndarray:
+    """
+    生成全体单元索引编号
 
     Parameters
     ----------
     node_shape : list
-        节点形状
+        节点在每个坐标轴方向的数量列表，例如[65, 65]代表x和y方向分别设置65个等分点
 
     Returns
     -------
-    array
-        与单元位置对应的索引编号数组
-
-    '''
+    ndarray
+        与单元位置对应的索引编号数组，[i, j, k]->单元全局索引编号
+    """
     element_shape = [n - 1 for n in node_shape]
     element_size = 1
     for n in node_shape:
@@ -231,21 +230,20 @@ def create_element_index(node_shape):
     return np.arange(element_size).reshape(element_shape)
 
 
-def create_lmn(node_shape):
-    '''
+def create_lmn(node_shape: list) -> tuple[ndarray, ndarray] | tuple[ndarray, ndarray, ndarray]:
+    """
     生成l, m, n
 
     Parameters
     ----------
     node_shape : list
-        节点形状
+        节点在每个坐标轴方向的数量列表，例如[65, 65]代表x和y方向分别设置65个等分点
 
     Returns
     -------
-    tuple
+    m, l, n
         每个坐标方向上的节点数
-
-    '''
+    """
     if len(node_shape) == 2:
         m = node_shape[0]
         l = node_shape[1]
@@ -255,24 +253,25 @@ def create_lmn(node_shape):
         l = node_shape[1]
         n = node_shape[2]
         return l, m, n
-    return 0
+    else:
+        raise NotImplementedError(f'the geometry dimension {len(node_shape)} is not supported')
+        # return 0
 
 
-def create_ijk(node_shape):
-    '''
+def create_ijk(node_shape: list) -> tuple[ndarray, ndarray] | tuple[ndarray, ndarray, ndarray]:
+    """
     生成i, j, k
 
     Parameters
     ----------
     node_shape : list
-        节点形状
+        节点在每个坐标轴方向的数量列表，例如[65, 65]代表x和y方向分别设置65个等分点
 
     Returns
     -------
-    tuple
+    j, k, i
         每个坐标方向上的单元编号
-
-    '''
+    """
     element_shape = [n - 1 for n in node_shape]
     ijk = [np.arange(n) for n in element_shape]
     if len(node_shape) == 2:
@@ -281,10 +280,13 @@ def create_ijk(node_shape):
     elif len(node_shape) == 3:
         j, k, i = np.meshgrid(ijk[0], ijk[1], ijk[2])
         return i, j, k
-    return 0
+    else:
+        raise NotImplementedError(f'the geometry dimension {len(node_shape)} is not supported')
+        # return 0
 
 
-def write_input_file(dim, nodes, elements, element_type, element_sets_dict, output_path):
+def write_input_file(dim: int, nodes: list[ndarray], elements: list[ndarray], element_type: str, element_sets_dict: dict,
+                     output_path: str) -> None:
     filename = os.path.join(output_path, 'Model-1.inp')
     outfile = open(filename, 'w')
 
@@ -332,7 +334,7 @@ def write_input_file(dim, nodes, elements, element_type, element_sets_dict, outp
             end = '\n'
         else:
             end = ','
-        outfile.write(str(node + 1) + end)
+        outfile.write(str(node + 1) + end)  # type: ignore
 
     if dim == 2:
         x0 = min(nodes[1])
@@ -352,7 +354,7 @@ def write_input_file(dim, nodes, elements, element_type, element_sets_dict, outp
             'X1-X1Y0': nodes[0][(nodes[1] == x1) & (~((nodes[1] == x1) & (nodes[2] == y0)))]
         }
 
-    if dim == 3:
+    elif dim == 3:
         x0 = min(nodes[1])
         x1 = max(nodes[1])
         y0 = min(nodes[2])
@@ -376,6 +378,9 @@ def write_input_file(dim, nodes, elements, element_type, element_sets_dict, outp
             'X1Y1Z1': nodes[0][(nodes[1] == x1) & (nodes[2] == y1) & (nodes[3] == z1)]
         }
 
+    else:
+        raise NotImplementedError(f'the geometry dimension {dim} is not supported')
+
     for key in node_sets_dict.keys():
         outfile.write('*Nset, nset=%s\n' % key)
         count = 0
@@ -387,24 +392,25 @@ def write_input_file(dim, nodes, elements, element_type, element_sets_dict, outp
                 end = '\n'
             else:
                 end = ','
-            outfile.write(str(node + 1) + end)
+            outfile.write(str(node + 1) + end)  # type: ignore
 
     outfile.close()
 
 
-def mesh(gap, dimension, node_shape, element_type, model_path, output_path, status, is_interface=True):
+def mesh(gap: float, dimension: list, node_shape: list, element_type: str, model_path: str, output_path: str,
+         status: dict, is_interface: bool = True) -> None:
     model_file = os.path.join(model_path, 'model.npy')
     circles = np.load(model_file)
     dim = circles.shape[-1] - 1
     if dim == 2:
-        node_index = create_node_index(node_shape)
-        element_index = create_element_index(node_shape)
+        node_index = create_nodes_indices(node_shape)
+        element_index = create_elements_indices(node_shape)
 
-        x, y = create_node_coordinate(node_shape, dimension)
-        ecx, ecy = element_centroid(node_shape, dimension)
+        x, y = create_nodes_coordinates(node_shape, dimension)  # type: ignore
+        ecx, ecy = create_elements_centroids(node_shape, dimension)  # type: ignore
 
-        l, m = create_lmn(node_shape)
-        i, j = create_ijk(node_shape)
+        l, m = create_lmn(node_shape)  # type: ignore
+        i, j = create_ijk(node_shape)  # type: ignore
         n1, n2, n3, n4 = element_node_CPE4(i, j, l, m)
 
         node_index = node_index.flatten()
@@ -454,13 +460,14 @@ def mesh(gap, dimension, node_shape, element_type, model_path, output_path, stat
                 element_sets[index_inter] = -1
 
     elif dim >= 3:
-        node_index = create_node_index(node_shape)
-        element_index = create_element_index(node_shape)
-        x, y, z = create_node_coordinate(node_shape, dimension)
-        ecx, ecy, ecz = element_centroid(node_shape, dimension)
+        node_index = create_nodes_indices(node_shape)
+        element_index = create_elements_indices(node_shape)
 
-        l, m, n = create_lmn(node_shape)
-        i, j, k = create_ijk(node_shape)
+        x, y, z = create_nodes_coordinates(node_shape, dimension)  # type: ignore
+        ecx, ecy, ecz = create_elements_centroids(node_shape, dimension)  # type: ignore
+
+        l, m, n = create_lmn(node_shape)  # type: ignore
+        i, j, k = create_ijk(node_shape)  # type: ignore
         n1, n2, n3, n4, n5, n6, n7, n8 = element_node_C3D8(i, j, k, l, m, n)
 
         node_index = node_index.flatten()
@@ -536,9 +543,12 @@ def mesh(gap, dimension, node_shape, element_type, model_path, output_path, stat
                 index_inter = (index1 | index2 | index3 | index4 | index5 | index6 | index7 | index8) ^ index_inner
                 element_sets[index_inter] = -1
 
+    else:
+        raise NotImplementedError(f'the geometry dimension {dim} is not supported')
+
     element_sets_names = np.unique(element_sets)
 
-    element_sets_dict = {}
+    element_sets_dict: dict = {}
     for name in element_sets_names:
         element_sets_dict[int(name)] = []
         element_sets_dict['MATRIX'] = []
@@ -562,7 +572,7 @@ def mesh(gap, dimension, node_shape, element_type, model_path, output_path, stat
     status['message']['elements_number'] = len(element_index)
 
 
-def create_mesh(gap, size, dimension, node_shape, element_type, model_path, output_path, status):
+def create_mesh(gap: float, size: list, dimension: list, node_shape: list, element_type: str, model_path: str, output_path: str, status: dict) -> int:
     args = gap, size, dimension, node_shape, element_type, model_path, output_path, status
 
     status['message'] = {}
@@ -587,11 +597,24 @@ def create_mesh(gap, size, dimension, node_shape, element_type, model_path, outp
 
 
 if __name__ == "__main__":
-    gap = 0.0
-    size = [[0.0, 0.125], [0.0, 0.125], [0.0, 0.125]]
+    # gap = 0.0
+    # size = [[0.0, 0.125], [0.0, 0.125], [0.0, 0.125]]
+    # dimension = [s[1] for s in size]
+    # node_shape = [65, 65, 65]
+    # element_type = 'C3D8T'
+    # model_path = ''
+    # output_path = ''
+    # status = {'status': 'Submit', 'log': '', 'progress': 0}
+    # args = (gap, size, dimension, node_shape, element_type, model_path, output_path, status)
+    # print(status)
+    # create_mesh(*args)
+    # print(status)
+
+    gap = 0.001
+    size = [[0.0, 1.0], [0.0, 1.0]]
     dimension = [s[1] for s in size]
-    node_shape = [65, 65, 65]
-    element_type = 'C3D8T'
+    node_shape = [65, 65]
+    element_type = 'CPE4'
     model_path = ''
     output_path = ''
     status = {'status': 'Submit', 'log': '', 'progress': 0}

@@ -2,14 +2,14 @@
 """
 
 """
-import matplotlib
-import matplotlib.pyplot as plt
+import matplotlib  # type: ignore
+import matplotlib.pyplot as plt  # type: ignore
 import numpy as np
-from matplotlib.patches import Circle
+from matplotlib.patches import Circle  # type: ignore
 from numpy import ndarray
 
 try:
-    from mayavi import mlab
+    from mayavi import mlab  # type: ignore
 
     has_mayavi = True
 except:
@@ -61,5 +61,5 @@ if __name__ == "__main__":
     centers = circles[:, 0:dim]
     radiuses = circles[:, dim:dim + 1]
     plot_circle(centers, radiuses, [[0, 1], [0, 1]], 'model.png', 300)
-    plot_sphere(centers, radiuses, [[0, 1], [0, 1], [0, 1]], 'model.png', (400, 400))
+    # plot_sphere(centers, radiuses, [[0, 1], [0, 1], [0, 1]], 'model.png', (400, 400))
     plot_distribution(radiuses, 'density.png', 300)
