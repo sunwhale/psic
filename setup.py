@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="psic",
-    version="0.1.1",
+    version="0.1.2",
     author="Jingyu Sun",
     author_email="sun.jingyu@outlook.com",
     description="Packing Spheres In Cube",
@@ -25,6 +25,7 @@ setuptools.setup(
     python_requires=">=3.9",
     install_requires=[
         'numpy',
-        'scipy'
+        'scipy',
+        'matplotlib'
     ],
 )
