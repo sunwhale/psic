@@ -1,0 +1,7 @@
+python=3.9
+py -m build
+twine upload dist/*
+
+python=3.12
+python setup.py sdist bdist_wheel
+python -m twine upload .\dist\*
