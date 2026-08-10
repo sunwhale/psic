@@ -20,7 +20,7 @@ matplotlib.use('Agg')
 def plot_circle(centers: ndarray, radiuses: ndarray, size: list, filename: str, dpi: int = 150) -> None:
     fig, ax = plt.subplots(1, 1, figsize=(6, 6))
     for i, _ in enumerate(centers):
-        C = Circle(centers[i], radius=radiuses[i], facecolor=(1, 1, 1, 1), edgecolor=(0, 0, 0, 1), linewidth=None)
+        C = Circle(centers[i], radius=radiuses[i][0], facecolor=(1, 1, 1, 1), edgecolor=(0, 0, 0, 1), linewidth=None)
         ax.add_patch(C)
     ax.axis('equal')
     ax.set_box_aspect(1)
